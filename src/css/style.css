@@ -1,0 +1,201 @@
+*{
+    outline: 0;
+    margin: 0;
+    padding: 0;
+}
+body{
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+.content{
+    max-width: 1024px;
+    width: 100%;
+    margin: auto;
+}
+
+.tab-nav{
+    width: 100%;
+    padding-top: 60px;
+}
+.tab-nav .nav{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.tab-nav .nav .nav-item{
+    display: inline-block;
+    width: 100%;
+    font-size: 22px;
+}
+.chart-heading{
+    display: block;
+    width: 100%;
+}
+.chart-heading h2{
+    text-transform: capitalize;
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+
+.row{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 30px;
+    row-gap: 1em;
+}
+img{
+    max-width: 100%;
+    height: auto;
+}
+.column {
+    width: 100%;
+} 
+
+.content-wrap{
+    display: inline-block;
+    width: 100%;
+}
+.card{
+    border: 1px solid #f1f1f1;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+.card .chart-image img{
+    height: 220px;
+}
+.card-footer{
+    background-color: rgb(240, 237, 232);
+    text-align: center;
+    padding: 15px;
+}
+.tab-content{
+    padding-bottom: 80px;
+}
+.left-content{
+    max-width: 45%;
+    width: 100%;
+}
+.right-content{
+    max-width: 55%;
+    width: 100%;
+}
+.right-content .content-main{
+    padding-left: 80px;
+    box-sizing: border-box;
+    padding-right: 15px;
+}
+.form{
+    max-width: 80%;
+    width: 100%;
+    padding-top: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    padding-bottom: 100px;
+}
+.form label{
+    display: block;
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+.form .form-control{
+    display: inline-block;
+    margin-bottom: 15px;
+    height: 35px;
+    max-width: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-size: 16px;
+}
+.button-group{
+    width: 100%;
+    display: block;
+    text-align: right;
+    padding-right: 15px;
+}
+
+.btn{
+    padding: 7px 20px;
+    background-color: black;
+    color: #fff;
+    border: none;
+    font-size: 20px;
+    text-decoration: none;
+    text-transform: capitalize;
+    cursor: pointer;
+   
+}
+.btn.btn-trans{
+    background-color: transparent;
+    font-size: 16px;
+    color: black;
+    padding: 0px;
+}
+.btn.btn-danger{
+    margin: 15px 0px;
+}
+.content-wrap-full{
+    max-width: 100%;
+    width: 100%;
+}
+.content-wrap-full .form{
+    max-width: 100%;
+    width: 100%;
+}
+.content-wrap-full .form .form-wrap{
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.form-wrap .chart-image{
+    width: 30%;
+}
+.form-wrap .form-fields{
+    max-width: 70%;
+    width: 100%;
+}
+.form-wrap .form-row{
+    max-width: 100%;
+    display: flex;
+    padding-left: 30px;
+    justify-content: space-between;
+    /* grid-template-columns: repeat(3, 1fr);
+    column-gap: 15px;
+    row-gap: 1em; */
+}
+.btn-left{
+    display: block;
+    margin-right: auto;
+    width: 100%;
+    text-align: left;
+}
+.in-row{
+    max-width: 100%;
+    display: block;
+    width: 100%;
+}
+.inner-row{
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.inner-row input.form-control.color{
+    width: 45px;
+}
+
+.form-wrap .form-row .m-2{
+    margin-right: 30px;
+    padding-right: 30px;
+}
+
+.preview-chart{
+    padding-top: 30px;
+    padding-bottom: 100px;
+}

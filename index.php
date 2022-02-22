@@ -9,8 +9,138 @@
 </head>
 <body>
     <div class="main">
-        <main class="">
-
+        <main class="content">
+            <div class="tab-nav">
+                <ol class="nav">
+                    <li class="nav-item">
+                        1. Choose Chart Type
+                    </li>
+                    <li class="nav-item">
+                        2. Enter Labels
+                    </li>
+                    <li class="nav-item">
+                        3. Enter Data
+                    </li>
+                    <li class="nav-item">
+                    4. Download
+                    </li>
+                </ol>
+            </div>
+            <div class="tab-content"> 
+                <div class="chart-heading">
+                    <h2>Bar Graphs</h2>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <a href="./chartform/barchartmake.php?type=1&&type_name=bar" class="content-wrap">
+                            <div class="card">
+                                <div class="chart-image">
+                                    <img src="./src/image/barchart1.png"/>
+                                </div>
+                                <div class="card-footer">
+                                    <h3>
+                                        Column with driildown
+                                    </h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="column">
+                        <a href="./chartform/barchartmake.php?type=2&&type_name=bar" class="content-wrap">
+                            <div class="card">
+                                <div class="chart-image">
+                                    <img src="./src/image/barchart2.png"/>
+                                </div>
+                                <div class="card-footer">
+                                    <h3>
+                                       Update option after render
+                                    </h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="column">
+                        <a href="./chartform/barchartmake.php?type=3&&type_name=bar" class="content-wrap">
+                            <div class="card">
+                                <div class="chart-image">
+                                    <img src="./src/image/barchart3.png"/>
+                                </div>
+                                <div class="card-footer">
+                                    <h3>
+                                       3D Cylinder
+                                    </h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="chart-heading">
+                    <h2>Line Graphs</h2>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <a href="./chartform/linechartform.php?type=1" class="content-wrap">
+                            <div class="card">
+                                <div class="chart-image">
+                                    <img src="./src/image/line1.png"/>
+                                </div>
+                                <div class="card-footer">
+                                    <h3>
+                                        Column with driildown
+                                    </h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="chart-heading">
+                    <h2>Gause Graphs</h2>
+                </div>
+                <div class="row">
+                    <div class="column">
+                        <a href="./chartform/piechartform.php?type=1" class="content-wrap">
+                            <div class="card">
+                                <div class="chart-image">
+                                    <img src="./src/image/pie1.png"/>
+                                </div>
+                                <div class="card-footer">
+                                    <h3>
+                                        Column with driildown
+                                    </h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="column">
+                        <a href="./chartform/piechartform.php?type=2" class="content-wrap">
+                            <div class="card">
+                                <div class="chart-image">
+                                    <img src="./src/image/pie2.png"/>
+                                </div>
+                                <div class="card-footer">
+                                    <h3>
+                                        Column with driildown
+                                    </h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="column">
+                        <a href="./chartform/piechartform.php?type=3" class="content-wrap">
+                            <div class="card">
+                                <div class="chart-image">
+                                    <img src="./src/image/pie3.png"/>
+                                </div>
+                                <div class="card-footer">
+                                    <h3>
+                                        Column with driildown
+                                    </h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 </body>
