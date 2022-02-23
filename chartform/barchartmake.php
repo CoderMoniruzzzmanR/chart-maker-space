@@ -8,21 +8,26 @@ if(isset($_GET['type_name'])){
     $_SESSION['chart_type'] = $_GET['type_name'];
 }
 
-if(isset($_POST['next'])){
-    $_SESSION['bar_title'] = $_POST['title'];
-    $_SESSION['bar_sub_title'] = $_POST['sub_title'];
-    $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
-    $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
-    if(!empty($_POST['bar_label'])){
-        $_SESSION['bar_label'] = $_POST['bar_label'];
-    }
-    //$bar_label = array("june", "july", "August");
-    // // $value = array($bar_label, "my_data");
-    // $_SESSION['bar_label'] = $bar_label;
-    // print_r();
+// if(isset($_POST['next'])){
+
+//     if(empty($_POST['title']) && empty($_POST['bar_label'])){
+//         header('location:barchartmake.php?mess=hi');
+//     }
+//     else{
+//         $_SESSION['bar_title'] = $_POST['title'];
+//         $_SESSION['bar_sub_title'] = $_POST['sub_title'];
+//         $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
+//         $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label']; 
+//         $_SESSION['bar_label'] = $_POST['bar_label'];   
+//     }
+   
+//     //$bar_label = array("june", "july", "August");
+//     // // $value = array($bar_label, "my_data");
+//     // $_SESSION['bar_label'] = $bar_label;
+//     // print_r();
     
 
-}
+// }
 // print_r($_SESSION['bar_type']);
 // print_r($_SESSION['chart_type']);
 
@@ -61,8 +66,8 @@ if(isset($_POST['next'])){
                 </ol>
             </div>
             <?php 
-                if(isset($_GET['type'])){
-                    $chart_id = $_GET['type'];
+                if(isset($_SESSION['bar_type'])){
+                    $chart_id = $_SESSION['bar_type'];
                     // echo $chart_id;
                     if($chart_id == 1){
                         $get_chart = $chart_id;
@@ -115,6 +120,14 @@ if(isset($_POST['next'])){
                                 if(isset( $_SESSION['bar_title'])){
                                     print_r($_SESSION['bar_title']);
                                 }?>"/>
+
+
+                                <?php
+                                if(isset( $_GET['title_err'])){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $_GET['title_err'];
+                                    echo '</span>';
+                                }?>
                             </div>
                             <div class="form-item">
                                 <label>Sub Title</label>
@@ -124,6 +137,13 @@ if(isset($_POST['next'])){
                                     print_r($_SESSION['bar_sub_title']);
                                 }
                                 ?>"/>
+
+                                <?php
+                                if(isset( $_GET['sub_title_err'])){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $_GET['sub_title_err'];
+                                    echo '</span>';
+                                }?>
                             </div>
                             <div class="form-item">
                                 <label>Vertical label</label>
@@ -132,6 +152,12 @@ if(isset($_POST['next'])){
                                     print_r($_SESSION['bar_vertical_label']);
                                 }
                                 ?>"/>
+                                <?php
+                                if(isset( $_GET['vertical_label_err'])){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $_GET['vertical_label_err'];
+                                    echo '</span>';
+                                }?>
                             </div>
                             <div class="form-item">
                                 <label>Horizontal label</label>
@@ -140,10 +166,15 @@ if(isset($_POST['next'])){
                                     print_r($_SESSION['bar_horizontal_label']);
                                 }
                                 ?>"/>
+                                <?php
+                                if(isset( $_GET['horizontal_label_err'])){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $_GET['horizontal_label_err'];
+                                    echo '</span>';
+                                }?>
                             </div>
                         </div>
                     </div>
-
                     <div class="add-more">
                         <?php 
                             if(isset($_SESSION['bar_label'])){
@@ -151,7 +182,11 @@ if(isset($_POST['next'])){
                                 foreach ($_SESSION['bar_label'] as $bar_label){
                                     echo' <div class="form-item">';
                                     echo'<label>Bar '. $count++ .' label</label>';
-                                    echo '<input type="text" name="bar_label[]" class="form-control m-input" placeholder="Enter title" autocomplete="off" value="'.$bar_label.'">';
+                                    echo '<input type="text" name="bar_label[]" class="form-control m-input"';
+                                    if(isset($bar_label)){
+                                        echo 'value="'.$bar_label.'"';
+                                    }
+                                    echo '>';
                                     //print $bar_label;
                                     echo'</div>';
                                 }
@@ -159,8 +194,13 @@ if(isset($_POST['next'])){
                             else{
                                 echo '<div class="form-item">';
                                 echo"<label>Bar 1 label</label>";
-                                echo' <input type="text" name="bar_label[]" class="form-control m-input" placeholder="Enter title" autocomplete="off">';
+                                echo' <input type="text" name="bar_label[]" class="form-control m-input">';
                                 echo '</div>';
+                            }
+                            if(isset($_GET['bar_label_er'])){
+                                echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                echo $_GET['bar_label_er'];
+                                echo '</span>';
                             }
                         ?>
                         <div id="newRow"></div>

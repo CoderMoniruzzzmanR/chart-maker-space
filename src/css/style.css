@@ -189,7 +189,9 @@ img{
 .inner-row input.form-control.color{
     width: 45px;
 }
-
+.form-wrap .form-row.row2{
+    flex-wrap: wrap;
+ }
 .form-wrap .form-row .m-2{
     margin-right: 30px;
     padding-right: 30px;
@@ -198,4 +200,7 @@ img{
 .preview-chart{
     padding-top: 30px;
     padding-bottom: 100px;
+}
+.content{
+    padding-bottom: 80px;
 }
