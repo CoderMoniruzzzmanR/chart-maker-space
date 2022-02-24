@@ -34,25 +34,46 @@ if(isset($_POST['next'])){
         header('location:barchartmake.php?title_err=Please enter title');
     }
     else{
-        $_SESSION['bar_title'] = $_POST['title'];
+        if(strlen($_POST['title']) > 100){
+            header('location:barchartmake.php?title_err= max char 100');
+        }
+        else{
+            $_SESSION['bar_title'] = $_POST['title'];
+        }
+        
     }
     if(empty($_POST['sub_title'])){
         header('location:barchartmake.php?sub_title_err=Please enter sub title');
     }
     else{
-        $_SESSION['bar_sub_title'] = $_POST['sub_title'];
+        if(strlen($_POST['sub_title']) > 100){
+            header('location:barchartmake.php?sub_title_err= max char 100');
+        }
+        else{
+            $_SESSION['bar_sub_title'] = $_POST['sub_title'];
+        }
     }
     if(empty($_POST['vertical_label'])){
         header('location:barchartmake.php?vertical_label_err=Please enter vertical label');
     }
     else{
-        $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
+        if(strlen($_POST['vertical_label']) > 100){
+            header('location:barchartmake.php?vertical_label_err= max char 100');
+        }
+        else{
+            $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
+        }
     }
     if(empty($_POST['horizontal_label'])){
         header('location:barchartmake.php?horizontal_label_err=Please enter horizontal label');
     }
     else{
-        $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
+        if(strlen($_POST['horizontal_label']) > 100){
+            header('location:barchartmake.php?horizontal_label_err= max char 100');
+        }
+        else{
+            $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
+        }
     }
     if($_POST['bar_label']){
         // Validate first

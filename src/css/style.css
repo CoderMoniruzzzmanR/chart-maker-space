@@ -126,7 +126,10 @@ img{
     text-decoration: none;
     text-transform: capitalize;
     cursor: pointer;
-   
+    margin-left: 20px;
+}
+.btn:first-child{
+   margin-left: 0px;
 }
 .btn.btn-trans{
     background-color: transparent;

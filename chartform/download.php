@@ -2,6 +2,7 @@
 session_start();
 
 
+
 // if(isset($_SESSION['bar_type'])){
 //     echo"<br>";
 //     echo $_SESSION['bar_type'];
@@ -23,9 +24,6 @@ session_start();
 //         $_SESSION['bar_label'] = $_POST['bar_label'];
 //     }
 // }
-
-
-
 // print_r($_SESSION['bar_title']);
 // echo"<br>";
 // print_r($_SESSION['bar_sub_title']);
@@ -60,6 +58,7 @@ if(isset($_POST['nexttwo'])){
             }
         }
     }
+
     if($_POST['color']){
         for($i=0; $i < count($_POST['color']); $i++) {
             if($_POST['color'][$i] == "") {
@@ -124,7 +123,7 @@ if(isset($_POST['getcode'])){
         $extention = end($after_explode);
         $allowed_extention = array('png','svg');
         if(in_array($extention, $allowed_extention)){
-            if($uploaded_file['size'] <= 10000){
+            if($uploaded_file['size'] <= 100000){
                 $file_name = 'water_image.'.$extention;
                 $new_location = '../uploads/'.$file_name;
   		        move_uploaded_file($uploaded_file['tmp_name'], $new_location);
@@ -140,7 +139,9 @@ if(isset($_POST['getcode'])){
     }
 }
 
+// echo "this is id ".session_id();
 
+$session_id = session_id();
 ?>
 
 
@@ -187,13 +188,20 @@ if(isset($_POST['getcode'])){
                     </div>
                 </form>
             </div>
-            <?php 
-                $image_path="../uploads/".$_SESSION['file_name'];
-                print_r($image_path); 
-            ?>
+            
             <div class="preview-chart">
                 <canvas id="myChart"></canvas>
             </div>
+
+                <?php 
+                    if(isset($_SESSION['file_name'])){
+                        $image_path="../uploads/".$_SESSION['file_name'];
+                    }
+                    echo '<button class="btn" onClick="download()">Download as Image</button>';
+
+                    echo '<button class="btn" id="downloadPdf">Download as pdf</button>';
+                    echo '<a href="share_chart.php?id='. $session_id.'" class="btn" >Share it</a>';
+                ?>
             <div class="btn-main">
                 <div class="button-group">
                     <a href="javascript:history.go(-1)" class="btn">back</a>
@@ -202,22 +210,37 @@ if(isset($_POST['getcode'])){
         </main>
     </div>
 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.debug.js"></script>
 
     <script>
 
         const labels = <?php echo $res_bar; ?>;
-
         const data = {
             labels: labels,
             datasets: [{
-            label: 'My First dataset',
             backgroundColor: <?php echo $res_color; ?>,
             borderColor: 'rgb(255, 99, 132)',
             data: <?php echo $res_value; ?>,
             }]
         };
 
+        const logo = new Image();
+        logo.src = '<?php if(isset($image_path)){echo $image_path;}else{echo ' ';} ?>';
+        <?php //echo $image_path; ?>
+
+        const logoImage = {
+            id : 'logoImage',
+            afterDraw(chart, args, options){
+                const {ctx, chartArea:{top, bottom, left, right}} = chart;
+                ctx.save();
+                if(logo.complete){
+                    ctx.drawImage(logo, (ctx.canvas.offsetWidth - 300), (ctx.canvas.offsetHeight - 300), 200, 200);
+                }
+            }
+        }
         const config = {
             type: 'bar',
             data: data,
@@ -236,36 +259,111 @@ if(isset($_POST['getcode'])){
                         title: {
                             display: true,
                             text: <?php echo $horizontal_title;?>,
+                            padding: {
+                                top: 30,
+                            },
+                            font: {
+                                size: 18
+                            }
                         },
                     },
                     y:{
                         title: {
                             display: true,
                             text: <?php echo $vertical_title;?>,
+                            padding: {
+                                right: 45,
+                            },
+                            font: {
+                                size: 18
+                            }
                         },
                     },
                 },
                 plugins: {
+
                     legend: {
                         display: false
                     },
                     title: {
                         display: true,
                         text: <?php echo $title;?>,
+                        padding: {
+                            bottom: 15,
+                        },
+                        font: {
+                            size: 18
+                        }
                     },
                     subtitle: {
                         display: true,
                         text: <?php echo $sub_title;?>,
+                        padding: {
+                            bottom: 30,
+                        }
                     }
                 }
-            }
+            },
+            plugins: [logoImage],
         };
 
         const myChart = new Chart(
             document.getElementById('myChart'),
             config
         );
+
+        function download(){
+            const imageLink = document.createElement('a');
+            const canvas = document.getElementById('myChart');
+            imageLink.href = canvas.toDataURL('image/png', 1);
+            imageLink.download = 'my_chart.png';
+            imageLink.click();
+            //console.log(canvas);
+            // console.log(ctx.canvas.offsetHeight);
+        }
         
+        $('#downloadPdf').click(function(event) {
+        // get size of report page
+        var reportPageHeight = $('#myChart').innerHeight();
+        var reportPageWidth = $('#myChart').innerWidth();
+        
+        // create a new canvas object that we will populate with all other canvas objects
+        var pdfCanvas = $('<canvas />').attr({
+            id: "canvaspdf",
+            width: reportPageWidth,
+            height: reportPageHeight
+        });
+        
+        // keep track canvas position
+        var pdfctx = $(pdfCanvas)[0].getContext('2d');
+        var pdfctxX = 0;
+        var pdfctxY = 0;
+        var buffer = 100;
+        
+        // for each chart.js chart
+        $("canvas").each(function(index) {
+            // get the chart height/width
+            var canvasHeight = $(this).innerHeight();
+            var canvasWidth = $(this).innerWidth();
+            
+            // draw the chart into the new canvas
+            pdfctx.drawImage($(this)[0], pdfctxX, pdfctxY, canvasWidth, canvasHeight);
+            pdfctxX += canvasWidth + buffer;
+            
+            // our report page is in a grid pattern so replicate that in the new canvas
+            if (index % 2 === 1) {
+            pdfctxX = 0;
+            pdfctxY += canvasHeight + buffer;
+            }
+        });
+        
+        // create new pdf and add our new canvas as an image
+        var pdf = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
+        pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
+        
+        // download the pdf
+        pdf.save('mychart.pdf');
+        });
     </script>
         
 </body>
