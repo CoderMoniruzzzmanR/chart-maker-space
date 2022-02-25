@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require '../database/db.php';
 
 
 // if(isset($_SESSION['bar_type'])){
@@ -93,6 +93,11 @@ if(isset($_SESSION['colors'])){
     $res_color = json_encode($colors_array);
 }
 
+if(isset($_SESSION['bar_label'])){
+    $bar_label= $_SESSION['bar_label'];
+    $res_bar_label = json_encode($bar_label);
+}
+
 if(isset($_SESSION['bar_title'])){
     $titles = $_SESSION['bar_title'];
     $title = json_encode($titles);
@@ -112,10 +117,28 @@ if(isset($_SESSION['bar_horizontal_label'])){
     $horizontal_titles = $_SESSION['bar_horizontal_label'];
     $horizontal_title = json_encode($horizontal_titles);
 }
+$session_id = session_id();
+
+$select_chart_db = " SELECT * FROM chart";
+$result = mysqli_query($db_conection, $select_chart_db);
 
 if(isset($_POST['getcode'])){
     if(empty($_FILES['water-image']['name'])){
-        header('location:download.php?water_image=Please select image');
+        if(isset($session_id)){
+            $target_value = '';
+            $target_id ='';
+            foreach ($result as $value) {
+                if($value['user_id'] == $session_id){
+                    $target_value = $value['user_id'];
+                    $target_id = $value['id'];
+                }
+            }
+        }
+        if($session_id !== $target_value){
+            $insert = "INSERT INTO chart (bar, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id) VALUES ('$res_bar_label','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$res_value','$res_color','$session_id')";
+            $result = mysqli_query($db_conection, $insert);
+        }
+        
     }
     else{
         $uploaded_file = $_FILES['water-image'];
@@ -127,7 +150,21 @@ if(isset($_POST['getcode'])){
                 $file_name = 'water_image.'.$extention;
                 $new_location = '../uploads/'.$file_name;
   		        move_uploaded_file($uploaded_file['tmp_name'], $new_location);
-                $_SESSION['file_name'] = $file_name;
+                $image_name = $_SESSION['file_name'] = $file_name;
+                if(isset($session_id)){
+                    $target_value = '';
+                    $target_id ='';
+                    foreach ($result as $value) {
+                        if($value['user_id'] == $session_id){
+                            $target_value = $value['user_id'];
+                            $target_id = $value['id'];
+                        }
+                    }
+                }
+                if($session_id !== $target_value){
+                    $insert = "INSERT INTO chart (bar, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id, water_image) VALUES ('$res_bar_label','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$res_value','$res_color','$session_id','$image_name')";
+                    $result = mysqli_query($db_conection, $insert);
+                }
             }
             else{
                 header('location:download.php?water_image=File Too large');
@@ -139,9 +176,68 @@ if(isset($_POST['getcode'])){
     }
 }
 
-// echo "this is id ".session_id();
 
-$session_id = session_id();
+$select_chart_db = " SELECT * FROM chart";
+$result = mysqli_query($db_conection, $select_chart_db);
+
+$get_iframe_id = '';
+$get_iframe_target_id = '';
+foreach ($result as $value) {
+    if($value['user_id'] == $session_id){
+        $get_iframe_id = $value['user_id'];
+        $get_iframe_target_id = $value['id'];
+    }
+}
+
+if(isset($get_iframe_target_id)){
+    $select_db = "SELECT * FROM chart WHERE id = $get_iframe_target_id";
+    $result = mysqli_query($db_conection,  $select_db);
+    if($result){
+        $after_assoc = mysqli_fetch_assoc($result);
+    }
+}
+
+if(isset($after_assoc['user_id'])){
+    $user_frame = $after_assoc['user_id'];
+}
+
+if(isset($after_assoc['water_image'])){
+    $image_path="../uploads/".$after_assoc['water_image'];
+}
+
+if(isset( $after_assoc['bar'])){
+    $bar_labels =  json_encode($after_assoc['bar']);
+}
+
+if(isset( $after_assoc['title'])){
+    $title =  json_encode($after_assoc['title']);
+}
+
+if(isset( $after_assoc['sub_title'])){
+    $sub_title =  json_encode($after_assoc['sub_title']);
+}
+
+if(isset( $after_assoc['horizontal_title'])){
+    $horizontal_title =  json_encode($after_assoc['horizontal_title']);
+}
+
+if(isset( $after_assoc['vertical_title'])){
+    $vertical_title =  json_encode($after_assoc['vertical_title']);
+}
+
+if(isset( $after_assoc['bar_name'])){
+    $bar_name =  $after_assoc['bar_name'];
+}
+
+if(isset( $after_assoc['bar_value'])){
+    $bar_value =  $after_assoc['bar_value'];
+}
+
+if(isset( $after_assoc['bar_color'])){
+    $bar_color =  $after_assoc['bar_color'];
+}
+
+
 ?>
 
 
@@ -152,6 +248,7 @@ $session_id = session_id();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../src/css/style.css"></link>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
     <title>Document</title>
 </head>
 <body>
@@ -188,25 +285,66 @@ $session_id = session_id();
                     </div>
                 </form>
             </div>
-            
-            <div class="preview-chart">
+        
+            <div class="preview-chart" style="border-top: 5px solid #33CC66; background-color: #ebfaf0; margin-bottom:100px;">
                 <canvas id="myChart"></canvas>
             </div>
-
                 <?php 
-                    if(isset($_SESSION['file_name'])){
-                        $image_path="../uploads/".$_SESSION['file_name'];
-                    }
-                    echo '<button class="btn" onClick="download()">Download as Image</button>';
+                    if(isset($user_frame)){
+                        echo '<button class="btn" onClick="download()">Download as Image</button>';
 
-                    echo '<button class="btn" id="downloadPdf">Download as pdf</button>';
-                    echo '<a href="share_chart.php?id='. $session_id.'" class="btn" >Share it</a>';
+                        echo '<button class="btn" id="downloadPdf">Download as pdf</button>';
+
+                        $base_url="http://".$_SERVER['SERVER_NAME'].dirname($_SERVER["REQUEST_URI"].'?').'/';
+                        echo '<a href="'.$base_url.'share_chart.php?id='.$user_frame.'" class="btn" id="downloadPdf">share</a>';
+                    }
                 ?>
-            <div class="btn-main">
-                <div class="button-group">
-                    <a href="javascript:history.go(-1)" class="btn">back</a>
+                <div class="btn-main">
+                    <div class="button-group">
+                        <a href="javascript:history.go(-1)" class="btn">back</a>
+                    </div>
                 </div>
-            </div>
+
+            <div class="copy_area">
+                <div class="btn-main">
+                    <div>
+                        <a href="javascript:void()" class="btn" onclick="myFunctionCopy()" onmouseout="outFunc()">
+                            <span class="tooltiptext" id="myTooltip">
+                                copy html
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                <textarea style="width: 500px;" rows="6" id="myInputCopy">
+                    <?php 
+                      $base_url="http://".$_SERVER['SERVER_NAME'].dirname($_SERVER["REQUEST_URI"].'?').'/';
+                        if(isset($user_frame)){
+                            echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">';
+                            echo '<div class="embed-responsive embed-responsive-16by9">';
+                            echo '<iframe class="embed-responsive-item" src="'. $base_url.'share_chart.php?id='.$user_frame.'">';
+                            echo '</iframe>';
+                            echo '</div>';
+                            echo '<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>';
+                            echo '<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>';
+                        }
+                    ?>
+                </textarea>
+                <script>
+                    function myFunctionCopy() {
+                        var copyText = document.getElementById("myInputCopy");
+                        copyText.select();
+                        copyText.setSelectionRange(0, 99999);
+                        navigator.clipboard.writeText(copyText.value);
+                        
+                        var tooltip = document.getElementById("myTooltip");
+                        tooltip.innerHTML = "Copied: " + copyText.value;
+                    }
+                    function outFunc() {
+                        var tooltip = document.getElementById("myTooltip");
+                        tooltip.innerHTML = "Copy to clipboard";
+                    }
+                </script>
+            </div>    
         </main>
     </div>
 
@@ -214,16 +352,19 @@ $session_id = session_id();
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.debug.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
 
     <script>
 
-        const labels = <?php echo $res_bar; ?>;
+        const labels = <?php echo $bar_name; ?>;
         const data = {
             labels: labels,
             datasets: [{
-            backgroundColor: <?php echo $res_color; ?>,
+            backgroundColor: <?php echo $bar_color; ?>,
             borderColor: 'rgb(255, 99, 132)',
-            data: <?php echo $res_value; ?>,
+            data: <?php echo $bar_value; ?>,
             }]
         };
 

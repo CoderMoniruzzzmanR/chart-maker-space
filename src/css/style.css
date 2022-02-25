@@ -24,7 +24,6 @@ body{
 }
 .tab-nav .nav .nav-item{
     display: inline-block;
-    width: 100%;
     font-size: 22px;
 }
 .chart-heading{
@@ -206,4 +205,15 @@ img{
 }
 .content{
     padding-bottom: 80px;
+}
+.inli{
+   display: inline-block;
+}
+.content-share{
+    max-width: 1200px;
+    margin: auto;
+}
+
+.mb-5{
+    margin-bottom: 30px;
 }

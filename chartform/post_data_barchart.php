@@ -1,8 +1,19 @@
 <?php
 session_start();
 
+$get_type_status ='';
+$get_chart_type = '';
+
 if(isset($_SESSION['bar_type'])){
-    $chart_id = $_SESSION['bar_type'];
+    $get_type_status =  $_SESSION['bar_type'];
+}
+if(isset($_SESSION['chart_type'])){
+    $get_chart_type = $_SESSION['chart_type'];
+}
+
+
+if(isset($get_type_status)){
+    $chart_id = $get_type_status;
     // echo $chart_id;
     if($chart_id == 1){
         $get_chart = $chart_id;
@@ -21,163 +32,51 @@ else{
     echo "some thing wrong";
 }
 
-// if(isset($_SESSION['bar_type'])){
-//     echo $_SESSION['bar_type'];
-// }
 
-// if(isset($_SESSION['chart_type'])){
-//    echo $_SESSION['chart_type'];
-// }
-
-if(isset($_POST['next'])){
-    if(empty($_POST['title'])){
-        header('location:barchartmake.php?title_err=Please enter title');
-    }
-    else{
-        if(strlen($_POST['title']) > 100){
-            header('location:barchartmake.php?title_err= max char 100');
-        }
-        else{
-            $_SESSION['bar_title'] = $_POST['title'];
-        }
-        
-    }
-    if(empty($_POST['sub_title'])){
-        header('location:barchartmake.php?sub_title_err=Please enter sub title');
-    }
-    else{
-        if(strlen($_POST['sub_title']) > 100){
-            header('location:barchartmake.php?sub_title_err= max char 100');
-        }
-        else{
-            $_SESSION['bar_sub_title'] = $_POST['sub_title'];
-        }
-    }
-    if(empty($_POST['vertical_label'])){
-        header('location:barchartmake.php?vertical_label_err=Please enter vertical label');
-    }
-    else{
-        if(strlen($_POST['vertical_label']) > 100){
-            header('location:barchartmake.php?vertical_label_err= max char 100');
-        }
-        else{
-            $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
-        }
-    }
-    if(empty($_POST['horizontal_label'])){
-        header('location:barchartmake.php?horizontal_label_err=Please enter horizontal label');
-    }
-    else{
-        if(strlen($_POST['horizontal_label']) > 100){
-            header('location:barchartmake.php?horizontal_label_err= max char 100');
-        }
-        else{
-            $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
-        }
-    }
-    if($_POST['bar_label']){
-        // Validate first
-        $error = "";
-        for($i=0; $i < count($_POST['bar_label']); $i++) {
-            if($_POST['bar_label'][$i] == "") {
-                header('location:barchartmake.php?bar_label_er=Please enter your bar label');
+$bar_er = $value_er = $color_er= Null;
+$flag = true;
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if($_POST['bar']){
+        for($i=0; $i < count($_POST['bar']); $i++) {
+            if($_POST['bar'][$i] == "") {
+                echo $bar_er = "Please enter bar name";
+                $flag = false;
             }
             else{
-                $_SESSION['bar_label'] = $_POST['bar_label'];
+                $_SESSION['bars'] = $_POST['bar'];
             }
         }
     }
-
-    // else{
-    //     $_SESSION['bar_label'] = $_POST['bar_label']; 
-    // }
-    // else{
-    //     $_SESSION['bar_label'] = $_POST['bar_label']; 
-    // }
-    
-    //$bar_label = array("june", "july", "August");
-    // // $value = array($bar_label, "my_data");
-    // $_SESSION['bar_label'] = $bar_label;
-    // print_r();
-     // $_SESSION['bar_sub_title'] = $_POST['sub_title'];
-        // $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
-        // $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label']; 
-        // $_SESSION['bar_label'] = $_POST['bar_label'];   
-    
-
+    if($_POST['value']){
+        for($i=0; $i < count($_POST['value']); $i++) {
+            if($_POST['value'][$i] == "") {
+                echo $value_er = "Please enter value";
+                $flag = false;
+            }
+            else{
+                $_SESSION['values'] = $_POST['value'];
+            }
+        }
+    }
+    if($_POST['color']){
+        for($i=0; $i < count($_POST['color']); $i++) {
+            if($_POST['color'][$i] == "") {
+                echo $color_er = "Please select color";
+                $flag = false;
+            }
+            else{
+                $_SESSION['colors'] = $_POST['color'];
+            }
+        }
+    }
+    if ($flag) {
+        header('location:download.php');
+    }
+  
 }
 
-// if(isset($_POST['next'])){
-//     $_SESSION['bar_title'] = $_POST['title'];
-//     $_SESSION['bar_sub_title'] = $_POST['sub_title'];
-//     $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
-//     $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
-//     if(!empty($_POST['bar_label'])){
-//         $_SESSION['bar_label'] = $_POST['bar_label'];
-//     }
-//     //$bar_label = array("june", "july", "August");
-//     // // $value = array($bar_label, "my_data");
-//     // $_SESSION['bar_label'] = $bar_label;
-//     // print_r();
-    
-
-// }
-
-// $_SESSION['bar_title'] = $_POST['title'];
-// $_SESSION['bar_sub_title'] = $_POST['sub_title'];
-// $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
-// $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
-// if(!empty($_POST['bar_label'])){
-//     $_SESSION['bar_label'] = $_POST['bar_label'];
-// }
-
-// print_r($_SESSION['bar_title']);
-// echo"<br>";
-// print_r($_SESSION['bar_sub_title']);
-// echo"<br>";
-// print_r($_SESSION['bar_vertical_label']);
-// echo"<br>";
-// print_r($_SESSION['bar_horizontal_label']);
-
-// echo"<pre>";
-// print_r(array_values($_SESSION['bar_label']));
-// echo"</pre>";
-
-  
-
-
-
-// if(isset($_POST['nexttwo'])){
-//     if(!empty($_POST['bar']) && !empty($_POST['value'])&&!empty($_POST['color'])
-//     ){
-//         $_SESSION['bars'] = $_POST['bar'];
-//         $_SESSION['values'] = $_POST['value'];
-//         $_SESSION['colors'] = $_POST['color'];
-//     }
-  
-//     if(isset($_SESSION['bars'])){
-//         echo"<pre>";
-//         print_r($_SESSION['bars']);
-//         echo"</pre>";
-//     }
-//     if(isset($_SESSION['values'])){
-//         echo"<pre>";
-//         print_r($_SESSION['values']);
-//         echo"</pre>";
-//     }
-//     if(isset($_SESSION['colors'])){
-//         echo"<pre>";
-//         print_r($_SESSION['colors']);
-//         echo"</pre>";
-//     }
-
-   
-
-   
-// }
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -208,7 +107,7 @@ if(isset($_POST['next'])){
             </div>
             <div class="content-wrap-full">
             <!-- download.php -->
-                <form action="download.php" class="form" method="POST">
+                <form action="<?php echo $_SERVER['PHP_SELF'] ;?>" class="form" method="POST">
                     <div class="form-wrap">
                         <div class="chart-image">
                             <?php  
@@ -234,9 +133,9 @@ if(isset($_POST['next'])){
                                     <div>
                                         <label>Bar</label>
                                         <?php
-                                        if(isset( $_GET['bar_er'])){
+                                        if(isset($bar_er)){
                                             echo '<span style="color:red; padding-bottom:10px; display:block;">';
-                                            echo $_GET['bar_er'];
+                                            echo $bar_er;
                                             echo '</span>';
                                         }?>
                                     </div>
@@ -261,9 +160,9 @@ if(isset($_POST['next'])){
                                     <div>
                                         <label>value</label>
                                         <?php
-                                        if(isset( $_GET['value_er'])){
+                                        if(isset($value_er)){
                                             echo '<span style="color:red; padding-bottom:10px; display:block;">';
-                                            echo $_GET['value_er'];
+                                            echo $value_er;
                                             echo '</span>';
                                         }?>
                                     </div>
@@ -296,13 +195,6 @@ if(isset($_POST['next'])){
                                                 echo '<input type="color" name="color[]" class="form-control color">';
                                             }
                                         ?>
-                                        <!-- <input type="color" name="color[]" class="form-control" value="<?php
-                                            // if(isset( $_SESSION['colors'])){
-                                            //     foreach ($_SESSION['colors'] as $color){
-                                            //         echo $color;
-                                            //     }
-                                            // }?>"
-                                        /> -->
                                     </div>
                                 </div>
                             </div>
