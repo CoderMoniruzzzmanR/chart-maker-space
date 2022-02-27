@@ -101,7 +101,7 @@ img{
     margin-bottom: 15px;
 }
 .form .form-control{
-    display: inline-block;
+    display: block;
     margin-bottom: 15px;
     height: 35px;
     max-width: 100%;
@@ -185,11 +185,12 @@ img{
     max-width: 100%;
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
 }
 
 .inner-row input.form-control.color{
     width: 45px;
+    height: 40px;
 }
 .form-wrap .form-row.row2{
     flex-wrap: wrap;

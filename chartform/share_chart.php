@@ -29,7 +29,7 @@ if(isset($get_user_id)){
         $sub_title =  json_encode($after_assoc['sub_title']);
     }
     if(isset( $after_assoc['horizontal_title'])){
-        $horizontal_title =  json_encode($after_assoc['horizontal_title']);
+        $horizontal_title =  $after_assoc['horizontal_title'];
     }
     if(isset( $after_assoc['vertical_title'])){
         $vertical_title =  json_encode($after_assoc['vertical_title']);
@@ -48,7 +48,10 @@ if(isset($get_user_id)){
     }
     if(isset( $after_assoc['water_image'])){
         $water_image =  $after_assoc['water_image'];
-        $image_path="../uploads/".$water_image;
+        if( $water_image !==NULL){
+            $image_path="../uploads/".$water_image;
+        }
+       
     }
 }
 ?>
@@ -163,8 +166,8 @@ if(isset($get_user_id)){
                         }
                     }
                 }
-            },
-            plugins: [logoImage],
+            }
+            <?php if(isset($image_path)) { echo ",plugins:[logoImage]";}?>,
         };
 
         const myChart = new Chart(

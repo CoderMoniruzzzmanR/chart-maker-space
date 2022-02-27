@@ -2,82 +2,7 @@
 session_start();
 require '../database/db.php';
 
-
-// if(isset($_SESSION['bar_type'])){
-//     echo"<br>";
-//     echo $_SESSION['bar_type'];
-// }
-
-// if(isset($_SESSION['chart_type'])){
-//     echo"<br>";
-//    echo $_SESSION['chart_type'];
-//    echo"<br>";
-// }
-
-
-// if(isset($_POST['next'])){
-//     $_SESSION['bar_title'] = $_POST['title'];
-//     $_SESSION['bar_sub_title'] = $_POST['sub_title'];
-//     $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
-//     $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
-//     if(!empty($_POST['bar_label'])){
-//         $_SESSION['bar_label'] = $_POST['bar_label'];
-//     }
-// }
-// print_r($_SESSION['bar_title']);
-// echo"<br>";
-// print_r($_SESSION['bar_sub_title']);
-// echo"<br>";
-// print_r($_SESSION['bar_vertical_label']);
-// echo"<br>";
-// print_r($_SESSION['bar_horizontal_label']);
-
-// echo"<pre>";
-// print_r(array_values($_SESSION['bar_label']));
-// echo"</pre>";
-
-
-if(isset($_POST['nexttwo'])){
-    if($_POST['bar']){
-        for($i=0; $i < count($_POST['bar']); $i++) {
-            if($_POST['bar'][$i] == "") {
-                header('location:post_data_barchart.php?bar_er=Please enter bar name');
-            }
-            else{
-                $_SESSION['bars'] = $_POST['bar'];
-            }
-        }
-    }
-    if($_POST['value']){
-        for($i=0; $i < count($_POST['value']); $i++) {
-            if($_POST['value'][$i] == "") {
-                header('location:post_data_barchart.php?value_er=Please enter value');
-            }
-            else{
-                $_SESSION['values'] = $_POST['value'];
-            }
-        }
-    }
-
-    if($_POST['color']){
-        for($i=0; $i < count($_POST['color']); $i++) {
-            if($_POST['color'][$i] == "") {
-                header('location:post_data_barchart.php?color_er=Please select color');
-            }
-            else{
-                $_SESSION['colors'] = $_POST['color'];
-            }
-        }
-    }
-    // if(!empty($_POST['bar']) && !empty($_POST['value'])&&!empty($_POST['color'])
-    // ){
-    //     $_SESSION['bars'] = $_POST['bar'];
-    //     $_SESSION['values'] = $_POST['value'];
-    //     $_SESSION['colors'] = $_POST['color'];
-    // }
-  
-}
-
+$res_bar_label = $titles = $res_value = $sub_titles = $horizontal_title = $vertical_titles = $get_type_status = $get_chart_type = Null;
 if(isset($_SESSION['bars'])){
     $values_array = $_SESSION['bars'];
     $res_bar = json_encode($values_array);
@@ -117,11 +42,24 @@ if(isset($_SESSION['bar_horizontal_label'])){
     $horizontal_titles = $_SESSION['bar_horizontal_label'];
     $horizontal_title = json_encode($horizontal_titles);
 }
+
+if(isset($_SESSION['bar_type'])){
+    $get_type_status =  $_SESSION['bar_type'];
+}
+if(isset($_SESSION['chart_type'])){
+    $get_chart_type = $_SESSION['chart_type'];
+}
+
+// echo '<br>';
+// echo $get_type_status;
+// echo '<br>';
+// echo $get_chart_type;
+// echo '<br>';
+
 $session_id = session_id();
 
 $select_chart_db = " SELECT * FROM chart";
 $result = mysqli_query($db_conection, $select_chart_db);
-
 if(isset($_POST['getcode'])){
     if(empty($_FILES['water-image']['name'])){
         if(isset($session_id)){
@@ -135,8 +73,25 @@ if(isset($_POST['getcode'])){
             }
         }
         if($session_id !== $target_value){
-            $insert = "INSERT INTO chart (bar, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id) VALUES ('$res_bar_label','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$res_value','$res_color','$session_id')";
+            $insert = "INSERT INTO chart (bar, type, chart_type, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id) VALUES ('$res_bar_label','$get_type_status','$get_chart_type','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$res_value','$res_color','$session_id')";
             $result = mysqli_query($db_conection, $insert);
+        }
+        else{
+            if(isset($target_id)){
+                $select_db = "SELECT * FROM chart WHERE id = $target_id";
+                $result = mysqli_query($db_conection,  $select_db);
+                if($result){
+                    $after_assoc = mysqli_fetch_assoc($result);
+                }
+            }
+            if(isset($after_assoc['water_image'])){
+                if($after_assoc['water_image'] !== NULL){
+                    $delete_from_location="../uploads/".$after_assoc['water_image'];
+                    unlink($delete_from_location);
+                }
+            }  
+            $update = "UPDATE chart SET bar='$res_bar_label',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$res_value',bar_color='$res_color',user_id='$session_id',water_image=NULL WHERE id=$target_id";
+            $result = mysqli_query($db_conection, $update);
         }
         
     }
@@ -147,7 +102,7 @@ if(isset($_POST['getcode'])){
         $allowed_extention = array('png','svg');
         if(in_array($extention, $allowed_extention)){
             if($uploaded_file['size'] <= 100000){
-                $file_name = 'water_image.'.$extention;
+                $file_name = $session_id.'.'.$extention;
                 $new_location = '../uploads/'.$file_name;
   		        move_uploaded_file($uploaded_file['tmp_name'], $new_location);
                 $image_name = $_SESSION['file_name'] = $file_name;
@@ -164,6 +119,12 @@ if(isset($_POST['getcode'])){
                 if($session_id !== $target_value){
                     $insert = "INSERT INTO chart (bar, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id, water_image) VALUES ('$res_bar_label','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$res_value','$res_color','$session_id','$image_name')";
                     $result = mysqli_query($db_conection, $insert);
+                }
+                else{
+                    // echo $target_id;
+                    $update = "UPDATE chart SET bar='$res_bar_label',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$res_value',bar_color='$res_color',user_id='$session_id',water_image='$image_name' WHERE id=$target_id";
+                    $result = mysqli_query($db_conection, $update);
+                    // echo 'ok';
                 }
             }
             else{
@@ -202,7 +163,9 @@ if(isset($after_assoc['user_id'])){
 }
 
 if(isset($after_assoc['water_image'])){
-    $image_path="../uploads/".$after_assoc['water_image'];
+    if($after_assoc['water_image'] !== NULL){
+        $image_path="../uploads/".$after_assoc['water_image'];
+    }
 }
 
 if(isset( $after_assoc['bar'])){
@@ -218,7 +181,7 @@ if(isset( $after_assoc['sub_title'])){
 }
 
 if(isset( $after_assoc['horizontal_title'])){
-    $horizontal_title =  json_encode($after_assoc['horizontal_title']);
+    $horizontal_title = $after_assoc['horizontal_title'];
 }
 
 if(isset( $after_assoc['vertical_title'])){
@@ -237,6 +200,14 @@ if(isset( $after_assoc['bar_color'])){
     $bar_color =  $after_assoc['bar_color'];
 }
 
+$graph_status = $ghaph_name_type = '';
+if(isset( $after_assoc['type'])){
+    $graph_status =  $after_assoc['type'];
+}
+
+if(isset( $after_assoc['chart_type'])){
+    $ghaph_name_type =  $after_assoc['chart_type'];
+}
 
 ?>
 
@@ -294,14 +265,20 @@ if(isset( $after_assoc['bar_color'])){
                         echo '<button class="btn" onClick="download()">Download as Image</button>';
 
                         echo '<button class="btn" id="downloadPdf">Download as pdf</button>';
-
+                       
                         $base_url="http://".$_SERVER['SERVER_NAME'].dirname($_SERVER["REQUEST_URI"].'?').'/';
-                        echo '<a href="'.$base_url.'share_chart.php?id='.$user_frame.'" class="btn" id="downloadPdf">share</a>';
+
+                        echo '<input type="text" style="margin-left:15px;" value="'.$base_url.'share_chart.php?id='.$user_frame.'" id="urlInputCopy">';
+                        echo '<button class="btn" onclick="myUrlCopy()">copy to share</button>';
                     }
                 ?>
                 <div class="btn-main">
                     <div class="button-group">
-                        <a href="javascript:history.go(-1)" class="btn">back</a>
+                        <?php  
+                            $base_url="http://".$_SERVER['SERVER_NAME'];
+                            echo '<a href="'.$base_url.'/chart-maker-Spec/chartform/post_data_barchart.php" class="btn">back</a>';
+                        ?>
+                        
                     </div>
                 </div>
 
@@ -330,19 +307,23 @@ if(isset( $after_assoc['bar_color'])){
                     ?>
                 </textarea>
                 <script>
+                    function myUrlCopy() {
+                        var copyText = document.getElementById("urlInputCopy");
+                        copyText.select();
+                        copyText.setSelectionRange(0, 99999);
+                        navigator.clipboard.writeText(copyText.value);
+                    }
+
                     function myFunctionCopy() {
                         var copyText = document.getElementById("myInputCopy");
                         copyText.select();
                         copyText.setSelectionRange(0, 99999);
                         navigator.clipboard.writeText(copyText.value);
-                        
-                        var tooltip = document.getElementById("myTooltip");
-                        tooltip.innerHTML = "Copied: " + copyText.value;
                     }
-                    function outFunc() {
-                        var tooltip = document.getElementById("myTooltip");
-                        tooltip.innerHTML = "Copy to clipboard";
-                    }
+                    // function outFunc() {
+                    //     var tooltip = document.getElementById("myTooltip");
+                    //     tooltip.innerHTML = "Copy to clipboard";
+                    // }
                 </script>
             </div>    
         </main>
@@ -369,8 +350,7 @@ if(isset( $after_assoc['bar_color'])){
         };
 
         const logo = new Image();
-        logo.src = '<?php if(isset($image_path)){echo $image_path;}else{echo ' ';} ?>';
-        <?php //echo $image_path; ?>
+        logo.src = '<?php if(isset($image_path)){echo $image_path;}else{echo '  ';} ?>';
 
         const logoImage = {
             id : 'logoImage',
@@ -382,21 +362,26 @@ if(isset( $after_assoc['bar_color'])){
                 }
             }
         }
+        var delayed;
         const config = {
-            type: 'bar',
+            type: '<?php echo $ghaph_name_type;?>',
             data: data,
             options: {
                 animations: {
-                    tension: {
-                        duration: 800,
-                        easing: 'easeInOutCubic',
-                        from: 1,
-                        to: 0,
-                        loop: true
-                    }
+                    onComplete: () => {
+                        delayed = true;
+                    },
+                    delay: (context) => {
+                        let delay = 0;
+                        if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                        delay = context.dataIndex * 300 + context.datasetIndex * 100;
+                        }
+                        return delay;
+                    },
                 },
                 scales:{
                     x:{
+                        stacked: true,
                         title: {
                             display: true,
                             text: <?php echo $horizontal_title;?>,
@@ -409,6 +394,7 @@ if(isset( $after_assoc['bar_color'])){
                         },
                     },
                     y:{
+                        stacked: true,
                         title: {
                             display: true,
                             text: <?php echo $vertical_title;?>,
@@ -444,8 +430,8 @@ if(isset( $after_assoc['bar_color'])){
                         }
                     }
                 }
-            },
-            plugins: [logoImage],
+            }
+            <?php if(isset($image_path)) { echo ",plugins:[logoImage]";}?>,
         };
 
         const myChart = new Chart(

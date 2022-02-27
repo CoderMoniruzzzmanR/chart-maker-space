@@ -28,6 +28,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $_SESSION['bar_title'] = $_POST['title'];
         }
     }
+    else{
+        $_SESSION['bar_title'] = $_POST['title'];
+    }
     if (!empty($_POST["sub_title"])) {
         if(strlen($_POST['sub_title']) > 100){
             $sub_title_err = "Max character 100";
@@ -36,6 +39,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         else{
             $_SESSION['bar_sub_title'] = $_POST['sub_title'];
         }
+    }
+    else{
+        $_SESSION['bar_sub_title'] = $_POST['sub_title'];
     }
     if (!empty($_POST["vertical_label"])) {
         if(strlen($_POST['vertical_label']) > 100){
@@ -46,6 +52,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
         }
     }
+    else{
+        $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
+    }
     if (!empty($_POST["horizontal_label"])) {
         if(strlen($_POST['horizontal_label']) > 100){
             $horizontal_label_err = "Max character 100";
@@ -55,18 +64,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
         }
     }
+    else{
+        $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
+    }
     if($flag) {
         echo "ok";
         header('location:post_data_barchart.php');
     }
 }
 
-// echo "<br>";
-// echo "<br>";
-// echo $get_type_status;
-// echo "<br>";
-// echo "<br>";
-// echo $get_chart_type;
+
 
 
 ?>
@@ -186,7 +193,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </div>
                     </div>
                     <div class="button-group">
-                        <a href="javascript:history.go(-1)" class="btn">back</a>
+                        <?php  
+                            $base_url="http://".$_SERVER['SERVER_NAME'];
+                            echo '<a href="'.$base_url.'/chart-maker-Spec/index.php" class="btn">back</a>';
+                        ?>
+                        
                         <input type="submit" name="next" class="btn" value="next"/>
                     </div>
                 </form>
