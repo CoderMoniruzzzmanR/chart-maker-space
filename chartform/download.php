@@ -3,9 +3,18 @@ session_start();
 require '../database/db.php';
 
 $res_bar_label = $titles = $res_value = $sub_titles = $horizontal_title = $vertical_titles = $get_type_status = $get_chart_type = Null;
+
+$res_bar = '';
+
 if(isset($_SESSION['bars'])){
     $values_array = $_SESSION['bars'];
     $res_bar = json_encode($values_array);
+}
+
+$res_line_label = '';
+if(isset($_SESSION['barsl'])){
+    $values_array = $_SESSION['barsl'];
+    $res_line_label = json_encode($values_array);
 }
 
 if(isset($_SESSION['values'])){
@@ -56,12 +65,92 @@ if(isset($_SESSION['chart_type'])){
 // echo $get_chart_type;
 // echo '<br>';
 
+if(isset($_SESSION['colors'])){
+    $colors_array = $_SESSION['colors'];
+    $res_color = json_encode($colors_array);
+}
+
+if(isset($_SESSION['bg_color'])){
+    $bg_color_array = $_SESSION['bg_color'];
+    $res_color_bg = json_encode($bg_color_array);
+}
+
+if(isset($_SESSION['value_one'])){
+    $values_one_array = $_SESSION['value_one'];
+    $res_value_one = json_encode($values_one_array);
+}
+
+if(isset($_SESSION['values_two'])){
+    $values_two_array = $_SESSION['values_two'];
+    $res_value_two = json_encode($values_two_array);
+}
+
+
+if(isset($_SESSION['values_three'])){
+    $values_three_array = $_SESSION['values_three'];
+    $res_value_three = json_encode($values_three_array);
+}
+
+$d_color = $d_value = $d_value_one = $d_value_two = $d_value_three = $d_bg_color = $line_label = '';
+
+if(isset($res_value)){
+    $d_value = $res_value;
+}
+if(isset($res_color)){
+    $d_color = $res_color;
+}
+if(isset($res_color_bg)){
+    $d_bg_color = $res_color_bg;
+}
+if(isset($res_value_one)){
+   $d_value_one = $res_value_one;
+}
+if(isset($res_value_two)){
+    $d_value_two = $res_value_two;
+}
+if(isset($res_value_three)){
+    $d_value_three = $res_value_three;
+}
+
 $session_id = session_id();
 
 $select_chart_db = " SELECT * FROM chart";
 $result = mysqli_query($db_conection, $select_chart_db);
 if(isset($_POST['getcode'])){
+    // echo '<br>';
+    // echo $get_type_status;
+    // echo '<br>';
+    // echo $get_chart_type;
+    // echo '<br>';
+    // echo  "this is title =>".$title;
+    // echo '<br>';
+    // echo  "this is sub title =>".$sub_title;
+    // echo '<br>';
+    // echo  "this is vertical =>".$vertical_title;
+    // echo '<br>';
+    // echo  "this is horizontal =>". $horizontal_title;
+    // echo '<br>';
+    // echo  "this is bar =>".$res_bar;
+    // echo '<br>';
+    // echo  "this is value =>".$d_value;
+    // echo '<br>';
+    // echo  "this is color =>". $d_color;
+    // echo '<br>';
+    // echo  "this is line label =>".$res_line_label;
+    // echo '<br>';
+    // echo  "this is line bg =>".$d_bg_color;
+    // echo '<br>';
+    // echo "this is line value one =>".$res_value_one;
+    // echo '<br>';
+    // echo "this is line value two =>".$d_value_two;
+    // echo '<br>';
+    // echo "this is line value three =>".$d_value_three;
+    // echo '<br>';
+    // echo "this is seesion id =>".$session_id;
+    // echo '<br>';
+    
     if(empty($_FILES['water-image']['name'])){
+            
         if(isset($session_id)){
             $target_value = '';
             $target_id ='';
@@ -72,9 +161,17 @@ if(isset($_POST['getcode'])){
                 }
             }
         }
+        
         if($session_id !== $target_value){
-            $insert = "INSERT INTO chart (bar, type, chart_type, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id) VALUES ('$res_bar_label','$get_type_status','$get_chart_type','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$res_value','$res_color','$session_id')";
+            $insert = "INSERT INTO chart (bar, type, chart_type, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id,values_two,values_three,bg_color,value_one,line_label) VALUES ('$res_bar_label','$get_type_status','$get_chart_type','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$d_value','$d_color','$session_id','$d_value_two','$d_value_three','$d_bg_color','$d_value_one','$res_line_label')";
             $result = mysqli_query($db_conection, $insert);
+            // if($result){
+            //     echo "ok";
+            // }
+            // else{
+            //     echo "no";
+            // }
+
         }
         else{
             if(isset($target_id)){
@@ -90,7 +187,8 @@ if(isset($_POST['getcode'])){
                     unlink($delete_from_location);
                 }
             }  
-            $update = "UPDATE chart SET bar='$res_bar_label',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$res_value',bar_color='$res_color',user_id='$session_id',water_image=NULL WHERE id=$target_id";
+
+            $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$session_id',water_image=NULL,values_two='$d_value_two',values_three='$d_value_three',bg_color='$d_bg_color',value_one='$d_value_one',line_label='$res_line_label' WHERE id=$target_id";
             $result = mysqli_query($db_conection, $update);
         }
         
@@ -117,12 +215,12 @@ if(isset($_POST['getcode'])){
                     }
                 }
                 if($session_id !== $target_value){
-                    $insert = "INSERT INTO chart (bar, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id, water_image) VALUES ('$res_bar_label','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$res_value','$res_color','$session_id','$image_name')";
+                    $insert = "INSERT INTO chart (bar, type, chart_type, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id, water_image, values_two,values_three, bg_color, value_one, line_label) VALUES ('$res_bar_label','$get_type_status','$get_chart_type','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$d_value','$d_color','$session_id','$image_name','$d_value_two','$d_value_three','$d_bg_color','$d_value_one','$res_line_label')";
                     $result = mysqli_query($db_conection, $insert);
                 }
                 else{
                     // echo $target_id;
-                    $update = "UPDATE chart SET bar='$res_bar_label',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$res_value',bar_color='$res_color',user_id='$session_id',water_image='$image_name' WHERE id=$target_id";
+                    $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$session_id',water_image='$image_name',values_two='$d_value_two',values_three='$d_value_three',bg_color='$d_bg_color',value_one='$d_value_one',line_label='$res_line_label' WHERE id=$target_id";
                     $result = mysqli_query($db_conection, $update);
                     // echo 'ok';
                 }
@@ -208,6 +306,45 @@ if(isset( $after_assoc['type'])){
 if(isset( $after_assoc['chart_type'])){
     $ghaph_name_type =  $after_assoc['chart_type'];
 }
+$count_line_label = '';
+
+if(isset( $after_assoc['value_one'])){
+    $ghaph_value_one =  $after_assoc['value_one'];
+    if( $ghaph_value_one){
+        $count_line_label = count(json_decode($ghaph_value_one));
+    }
+}
+    
+
+if(isset( $after_assoc['values_two'])){
+    $ghaph_values_two =  $after_assoc['values_two'];
+}
+
+if(isset( $after_assoc['values_three'])){
+    $ghaph_values_three =  $after_assoc['values_three'];
+}
+
+if(isset( $after_assoc['bg_color'])){
+    $ghaph_bg_color =  $after_assoc['bg_color'];
+    $bg_color_line = json_decode($ghaph_bg_color);
+    $dataCount = '';
+    if($bg_color_line){
+        $dataCount = count($bg_color_line);
+    }
+    $new_bg_color1 =  $new_bg_color1 =  $new_bg_color1 = '';
+    for ($i=0; $i < $dataCount; $i++) {
+        $new_bg_color1 = $bg_color_line[0];
+        $new_bg_color2 = $bg_color_line[1];
+        $new_bg_color3 = $bg_color_line[2];
+    }
+    $new_bg_color1;
+    $new_bg_color2;
+    $new_bg_color3;
+}
+
+if(isset( $after_assoc['line_label'])){
+    $ghaph_line_label =  $after_assoc['line_label'];
+}
 
 ?>
 
@@ -276,9 +413,17 @@ if(isset( $after_assoc['chart_type'])){
                     <div class="button-group">
                         <?php  
                             $base_url="http://".$_SERVER['SERVER_NAME'];
-                            echo '<a href="'.$base_url.'/chart-maker-Spec/chartform/post_data_barchart.php" class="btn">back</a>';
+                            if($get_chart_type == "pie" || $get_chart_type == "doughnut" || $get_chart_type == "polarArea"){
+                                echo '<a href="../chartform/post_data_piechart.php" class="btn">back</a>';
+                            }
+                            if($get_chart_type == "bar"){
+                                echo '<a href="../chartform/post_data_barchart.php" class="btn">back</a>';
+                            }
+                            if($get_chart_type == "line"){
+                                echo '<a href="../chartform/post_data_linechart.php" class="btn">back</a>';
+                            }
                         ?>
-                        
+                        <a href="#" class="btn">Exit</a>
                     </div>
                 </div>
 
@@ -336,17 +481,108 @@ if(isset( $after_assoc['chart_type'])){
     <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
-
+        <?php 
+            if(isset($ghaph_values_two)){
+                $count_all_value = '';
+                $all_value_two = '';
+                $all_value_two = json_decode($ghaph_values_two);
+                if($all_value_two){
+                    $count_all_value = count($all_value_two);
+                    for($i=0; $i < $count_all_value; $i++) {
+                        if($all_value_two[$i] == "") {
+                            echo "null";
+                        }
+                        else{
+                            echo "ok";
+                        }
+                    }
+                }
+                
+            }
+        ?>
     <script>
-
-        const labels = <?php echo $bar_name; ?>;
+        const labels = <?php if($ghaph_name_type == "line"){echo "''";}else{echo $bar_name;}?>;
         const data = {
-            labels: labels,
-            datasets: [{
-            backgroundColor: <?php echo $bar_color; ?>,
-            borderColor: 'rgb(255, 99, 132)',
-            data: <?php echo $bar_value; ?>,
-            }]
+            labels: <?php if($ghaph_name_type == "line"){
+                if(isset($ghaph_line_label)){
+                    echo $ghaph_line_label;
+            //     $counts_label = 0;
+            //     echo "[";
+            //     // for($i=0; $i < $count_line_label; $i++){
+            //     //     echo '"'.$counts_label +=10;
+            //     //     echo '"';
+            //     //     echo ",";
+            //     // }
+            //    echo "'June'";
+            //     echo "]";
+            }}else{echo "labels";}?>,
+            datasets: [
+                <?php 
+                    if($ghaph_name_type == "line"){
+                     
+                        if(isset($ghaph_value_one)){
+                            echo "{";
+                            echo "data:$ghaph_value_one,";
+                            echo "borderColor: '$new_bg_color1',";
+                            echo "backgroundColor: '$new_bg_color1',";
+                            echo "fill: false";
+                            echo "},";
+                        }
+                        if(isset($ghaph_values_two)){
+                            $count_all_value = '';
+                            $all_value_two = '';
+                            $all_value_two = json_decode($ghaph_values_two);
+                            $count_all_value = count($all_value_two);
+                            $is_true = true;
+                            for($i=0; $i < $count_all_value; $i++) {
+                                if($all_value_two[$i] == "") {
+                                    $is_true = false;
+                                }
+                                else{
+                                    $is_true = true;
+                                }
+                            }
+                            if($is_true){
+                                echo "{";
+                                echo "data:$ghaph_values_two,";
+                                echo "borderColor: '$new_bg_color2',";
+                                echo "backgroundColor:'$new_bg_color2',";
+                                echo "fill: false";
+                                echo "},";
+                            }
+                        }
+                        if(isset( $ghaph_values_three)){
+
+                            $count_all_value_three = '';
+                            $all_value_three = '';
+                            $all_value_three = json_decode($ghaph_values_three);
+                            $count_all_value_three = count($all_value_three);
+                            $is_true = true;
+                            for($i=0; $i < $count_all_value_three; $i++) {
+                                if($all_value_three[$i] == "") {
+                                    $is_true = false;
+                                }
+                                else{
+                                    $is_true = true;
+                                }
+                            }
+                            if($is_true ){
+                                echo "{";
+                                echo "data:$ghaph_values_three,";
+                                echo "borderColor: '$new_bg_color3',";
+                                echo "backgroundColor:'$new_bg_color3',";
+                                echo "fill: false";
+                                echo "}";
+                            }
+                           
+                        }
+                    } 
+                    else{
+                        echo "{backgroundColor: $bar_color,borderColor:  $bar_color,data: $bar_value,}";
+                    }
+                ?>
+                
+            ]
         };
 
         const logo = new Image();
@@ -368,49 +604,44 @@ if(isset( $after_assoc['chart_type'])){
             data: data,
             options: {
                 animations: {
-                    onComplete: () => {
-                        delayed = true;
-                    },
-                    delay: (context) => {
-                        let delay = 0;
-                        if (context.type === 'data' && context.mode === 'default' && !delayed) {
-                        delay = context.dataIndex * 300 + context.datasetIndex * 100;
-                        }
-                        return delay;
-                    },
-                },
-                scales:{
-                    x:{
-                        stacked: true,
-                        title: {
-                            display: true,
-                            text: <?php echo $horizontal_title;?>,
-                            padding: {
-                                top: 30,
-                            },
-                            font: {
-                                size: 18
-                            }
-                        },
-                    },
-                    y:{
-                        stacked: true,
-                        title: {
-                            display: true,
-                            text: <?php echo $vertical_title;?>,
-                            padding: {
-                                right: 45,
-                            },
-                            font: {
-                                size: 18
-                            }
-                        },
-                    },
-                },
+                    tension: {
+                        duration: 3000,
+                        easing: 'linear',
+                        from: 1,
+                        to: 0,
+                        loop: true
+                    }
+                }
+                <?php  
+                    // $ghaph_name_type = "bar";
+                    if($ghaph_name_type == "bar"){
+                        echo ",scales:{";
+                        echo " x:{";
+                        echo " stacked: true,";
+                        echo " title: {";
+                        echo "display: true, text: $horizontal_title, padding: {top: 30}, font: {size: 18},";
+                        echo " },"; 
+                        echo "},";
+                        echo "y:{";
+                        echo " stacked: true,";
+                        echo " title: {";
+                        echo "display: true, text: $vertical_title, padding: {right: 45,}, font: {size: 18},";
+                        echo " },";   
+                        echo "},";
+                        echo " }";
+                    }
+                 
+                ?>,
                 plugins: {
-
                     legend: {
-                        display: false
+                        <?php  
+                        if($ghaph_name_type == "bar" || $ghaph_name_type == "line"){
+                            echo "display: false";
+                        }
+                        else{
+                            echo "display: true"; 
+                        }
+                        ?>,
                     },
                     title: {
                         display: true,
@@ -432,6 +663,7 @@ if(isset( $after_assoc['chart_type'])){
                 }
             }
             <?php if(isset($image_path)) { echo ",plugins:[logoImage]";}?>,
+            
         };
 
         const myChart = new Chart(

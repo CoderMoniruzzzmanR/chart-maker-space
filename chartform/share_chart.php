@@ -53,6 +53,48 @@ if(isset($get_user_id)){
         }
        
     }
+    $graph_status = $ghaph_name_type = '';
+    if(isset( $after_assoc['type'])){
+        $graph_status =  $after_assoc['type'];
+    }
+
+    if(isset( $after_assoc['chart_type'])){
+        $ghaph_name_type =  $after_assoc['chart_type'];
+    }
+
+    $count_line_label = '';
+    if(isset( $after_assoc['value_one'])){
+        $ghaph_value_one =  $after_assoc['value_one'];
+        $count_line_label = count(json_decode($ghaph_value_one));
+    }
+
+    if(isset( $after_assoc['values_two'])){
+        $ghaph_values_two =  $after_assoc['values_two'];
+    }
+
+    if(isset( $after_assoc['values_three'])){
+        $ghaph_values_three =  $after_assoc['values_three'];
+    }
+
+
+    if(isset( $after_assoc['bg_color'])){
+        $ghaph_bg_color =  $after_assoc['bg_color'];
+        $bg_color_line = json_decode($ghaph_bg_color);
+        $dataCount = count($bg_color_line);
+        $new_bg_color1 =  $new_bg_color1 =  $new_bg_color1 = '';
+        for ($i=0; $i < $dataCount; $i++) {
+            $new_bg_color1 = $bg_color_line[0];
+            $new_bg_color2 = $bg_color_line[1];
+            $new_bg_color3 = $bg_color_line[2];
+        }
+        $new_bg_color1;
+        $new_bg_color2;
+        $new_bg_color3;
+    }
+    
+    if(isset( $after_assoc['line_label'])){
+        $ghaph_line_label =  $after_assoc['line_label'];
+    }
 }
 ?>
 
@@ -72,26 +114,50 @@ if(isset($get_user_id)){
             <div class="preview-chart-share" style="border-top: 5px solid #33CC66; background-color: #ebfaf0;">
                 <canvas id="myChart"></canvas>
             </div>
-            <!-- <div class="copy-link" style="margin-top:50px;  padding-bottom:50px;">
-                <input type="text" id="copy_url" style="padding: 10px 15px; width: 240px;">
-                <a>copy link</a>
-                <script type="text/javascript"> 
-                    document.getElementById("copy_url").value = window.location.href;
-                </script>
-            </div> -->
-            <!-- <iframe src=""></iframe> -->
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const labels = <?php echo $bar_name; ?>;
+        const labels = <?php if($ghaph_name_type == "line"){echo "''";}else{echo $bar_name;}?>;
         const data = {
-            labels: labels,
-            datasets: [{
-            backgroundColor: <?php echo $bar_color; ?>,
-            borderColor: 'rgb(255, 99, 132)',
-            data: <?php echo $bar_value; ?>,
-            }]
+            labels: <?php if($ghaph_name_type == "line"){
+                if(isset($ghaph_line_label)){
+                echo $ghaph_line_label;
+            }}else{echo "labels";}?>,
+            datasets: [<?php 
+                    if($ghaph_name_type == "line"){
+                        if(isset($ghaph_value_one)){
+                            echo "{";
+                            echo "data:$ghaph_value_one,";
+                            echo "borderColor: '$new_bg_color1',";
+                            echo "backgroundColor: '$new_bg_color1',";
+                            echo "fill: false";
+                            echo "},";
+                        }
+                        if(isset($ghaph_values_two)){
+
+                            
+                            echo "{";
+                            echo "data:$ghaph_values_two,";
+                            echo "borderColor: '$new_bg_color2',";
+                            echo "backgroundColor:'$new_bg_color2',";
+                            echo "fill: false";
+                            echo "},";
+                        }
+                        if(isset( $ghaph_values_three)){
+                            echo "{";
+                            echo "data:$ghaph_values_three,";
+                            echo "borderColor: '$new_bg_color3',";
+                            echo "backgroundColor:'$new_bg_color3',";
+                            echo "fill: false";
+                            echo "}";
+                        }
+                    } 
+                    else{
+                        echo "{backgroundColor: $bar_color,borderColor:  $bar_color,data: $bar_value,}";
+                    }
+                ?>,
+            ]
         };
         const logo = new Image();
         logo.src = '<?php if(isset($image_path)){echo $image_path;}else{echo ' ';} ?>';
@@ -106,47 +172,48 @@ if(isset($get_user_id)){
             }
         }
         const config = {
-            type: 'bar',
+            type: '<?php echo $ghaph_name_type;?>',
             data: data,
             options: {
                 animations: {
                     tension: {
-                        duration: 30000,
+                        duration: 3000,
                         easing: 'easeInOutCubic',
                         from: 1,
                         to: 0,
                         loop: true
                     }
-                },
-                scales:{
-                    x:{
-                        title: {
-                            display: true,
-                            text: <?php echo $horizontal_title;?>,
-                            padding: {
-                                top: 30,
-                            },
-                            font: {
-                                size: 18
-                            }
-                        },
-                    },
-                    y:{
-                        title: {
-                            display: true,
-                            text: <?php echo $vertical_title;?>,
-                            padding: {
-                                right: 45,
-                            },
-                            font: {
-                                size: 18
-                            }
-                        },
-                    },
-                },
+                }
+                <?php  
+                    // $ghaph_name_type = "bar";
+                    if($ghaph_name_type == "bar"){
+                        echo ",scales:{";
+                        echo " x:{";
+                        echo " stacked: true,";
+                        echo " title: {";
+                        echo "display: true, text: $horizontal_title, padding: {top: 30}, font: {size: 18},";
+                        echo " },"; 
+                        echo "},";
+                        echo "y:{";
+                        echo " stacked: true,";
+                        echo " title: {";
+                        echo "display: true, text: $vertical_title, padding: {right: 45,}, font: {size: 18},";
+                        echo " },";   
+                        echo "},";
+                        echo " }";
+                    }
+                 
+                ?>,
                 plugins: {
                     legend: {
-                        display: false
+                        <?php  
+                        if($ghaph_name_type == "bar" || $ghaph_name_type == "line"){
+                            echo "display: false";
+                        }
+                        else{
+                            echo "display: true"; 
+                        }
+                        ?>,
                     },
                     title: {
                         display: true,

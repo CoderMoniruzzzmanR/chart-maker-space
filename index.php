@@ -79,7 +79,7 @@
                 </div>
                 <div class="row">
                     <div class="column">
-                        <a href="./chartform/linechartform.php?type=1" class="content-wrap">
+                        <a href="./chartform/linechartform.php?type=1&&type_name=line" class="content-wrap">
                             <div class="card">
                                 <div class="chart-image">
                                     <img src="./src/image/line1.png"/>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="row">
                     <div class="column">
-                        <a href="./chartform/piechartform.php?type=1" class="content-wrap">
+                        <a href="./chartform/piechartform.php?type=1&&type_name=polarArea" class="content-wrap">
                             <div class="card">
                                 <div class="chart-image">
                                     <img src="./src/image/pie1.png"/>
@@ -112,7 +112,7 @@
                         </a>
                     </div>
                     <div class="column">
-                        <a href="./chartform/piechartform.php?type=2" class="content-wrap">
+                        <a href="./chartform/piechartform.php?type=2&&type_name=doughnut" class="content-wrap">
                             <div class="card">
                                 <div class="chart-image">
                                     <img src="./src/image/pie2.png"/>
@@ -126,7 +126,7 @@
                         </a>
                     </div>
                     <div class="column">
-                        <a href="./chartform/piechartform.php?type=3" class="content-wrap">
+                        <a href="./chartform/piechartform.php?type=3&&type_name=pie" class="content-wrap">
                             <div class="card">
                                 <div class="chart-image">
                                     <img src="./src/image/pie3.png"/>

@@ -95,7 +95,7 @@ img{
     padding-bottom: 100px;
 }
 .form label{
-    display: block;
+    display: inline-block;
     font-size: 22px;
     font-weight: 500;
     margin-bottom: 15px;
@@ -165,11 +165,16 @@ img{
     max-width: 100%;
     display: flex;
     padding-left: 30px;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     /* grid-template-columns: repeat(3, 1fr);
     column-gap: 15px;
     row-gap: 1em; */
 }
+
+/* .form-row{
+
+} */
+
 .btn-left{
     display: block;
     margin-right: auto;
@@ -192,6 +197,10 @@ img{
     width: 45px;
     height: 40px;
 }
+.form-control.color{
+    width: 45px;
+    height: 40px;
+}
 .form-wrap .form-row.row2{
     flex-wrap: wrap;
  }
@@ -199,7 +208,12 @@ img{
     margin-right: 30px;
     padding-right: 30px;
 }
-
+.inner-row input.form-control.value-input{
+    width: 45px;
+}
+.inner-row input.form-control.bar-input:first-child{
+    margin-top: 58px;
+}
 .preview-chart{
     padding-top: 30px;
     padding-bottom: 100px;
@@ -214,7 +228,29 @@ img{
     max-width: 1200px;
     margin: auto;
 }
-
+.form-input-bar{
+    margin-bottom: 15px;
+    height: 35px;
+    overflow: hidden;
+    font-size: 16px;
+    margin-left: 0px;
+}
+.form-input-bar.number{
+    margin-bottom: 0px;
+    margin-left: 0px;
+    width: 60px;
+}
+.add-more-btn{
+    background-color: transparent;
+    font-size: 16px;
+    color: black;
+    padding: 0px;
+    border: 0px;
+    cursor: pointer;
+}
 .mb-5{
     margin-bottom: 30px;
+}
+.content-md{
+    width: 70%;
 }

@@ -1,9 +1,80 @@
-<?php 
-    $previous = "javascript:history.go(-1)";
-    if(isset($_SERVER['HTTP_REFERER'])) {
-        $previous = $_SERVER['HTTP_REFERER'];
+<?php
+session_start();
+if(isset($_GET['type'])){
+    $_SESSION['bar_type'] = $_GET['type'];
+}
+if(isset($_GET['type_name'])){
+    $_SESSION['chart_type'] = $_GET['type_name'];
+}
+$get_type_status ='';
+$get_chart_type = '';
+
+if(isset($_SESSION['bar_type'])){
+    $get_type_status =  $_SESSION['bar_type'];
+}
+if(isset($_SESSION['chart_type'])){
+    $get_chart_type = $_SESSION['chart_type'];
+}
+
+$title_err = $sub_title_err = $vertical_label_err = $horizontal_label_err  = NULL;
+$flag = true;
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    if (!empty($_POST["title"])) {
+        if(strlen($_POST['title']) > 100){
+            $title_err = "Max character 100";
+            $flag = false;
+        }
+        else{
+            $_SESSION['bar_title'] = $_POST['title'];
+        }
     }
+    else{
+        $_SESSION['bar_title'] = $_POST['title'];
+    }
+    if (!empty($_POST["sub_title"])) {
+        if(strlen($_POST['sub_title']) > 100){
+            $sub_title_err = "Max character 100";
+            $flag = false;
+        }
+        else{
+            $_SESSION['bar_sub_title'] = $_POST['sub_title'];
+        }
+    }
+    else{
+        $_SESSION['bar_sub_title'] = $_POST['sub_title'];
+    }
+    if (!empty($_POST["vertical_label"])) {
+        if(strlen($_POST['vertical_label']) > 100){
+            $vertical_label_err = "Max character 100";
+            $flag = false;
+        }
+        else{
+            $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
+        }
+    }
+    else{
+        $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
+    }
+    if (!empty($_POST["horizontal_label"])) {
+        if(strlen($_POST['horizontal_label']) > 100){
+            $horizontal_label_err = "Max character 100";
+            $flag = false;
+        }
+        else{
+            $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
+        }
+    }
+    else{
+        $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
+    }
+    if($flag) {
+        echo "ok";
+        header('location:post_data_linechart.php');
+    }
+}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,82 +103,108 @@
                     </li>
                 </ol>
             </div>
-            <?php 
-                if(isset($_GET['type'])){
-                    $chart_id = $_GET['type'];
-                    // echo $chart_id;
-                    if($chart_id == 1){
-                        $get_chart = $chart_id;
-                    }
-                    // elseif($chart_id == 2){
-                    //     $get_chart = $chart_id;
-                    // }
-                    // elseif($chart_id == 3){
-                    //     $get_chart = $chart_id;
-                    // }
-                    else{
-                        echo "some thing wrong";
-                    }
-                }
-                else{
-                    echo "some thing wrong";
-                }
-            ?>
+            <!-- //post_data_barchart.php -->
             <div class="content-wrap">
-                <form action="" class="form">
+                <form action="<?php echo $_SERVER['PHP_SELF'] ;?>?type=<?php echo $get_type_status;?>&&type_name=<?php echo $get_chart_type;?>" class="form" method="POST">
                     <div class="left-content">
                         <div class="chart-image">
                             <?php  
-                                if(isset($get_chart)){
-                                    if($get_chart == 1){
-                                        echo '<img src="../src/image/line1.png" />';
-                                    }
-                                    // elseif($get_chart == 2){
-                                    //     echo '<img src="../src/image/barchart2.png"/>';
-                                    // }
-                                    // elseif($get_chart == 3){
-                                    //     echo '<img src="../src/image/barchart3.png"/>';
-                                    // }
-                                    else{
-                                        echo 'Image load error';
+                                if(isset($get_chart_type)){
+                                    if($get_chart_type == "line"){
+                                        if(isset($get_type_status)){
+                                            if($get_type_status == 1){
+                                                echo '<img src="../src/image/line1.png"/>';
+                                            }
+                                            elseif($get_type_status == 2){
+                                                echo '<img src="../src/image/line2.png"/>';
+                                            }
+                                            elseif($get_type_status == 3){
+                                                echo '<img src="../src/image/line3.png"/>';
+                                            }
+                                            else{
+                                                echo 'Image load error';
+                                            }
+                                        }
                                     }
                                 }
                             ?>
                         </div>
                     </div>
+
                     <div class="right-content">
                         <div class="content-main">
                             <div class="form-item">
                                 <label>Title</label>
-                                <input type="text" class="form-control" name="title"/>
+                                <input type="text" name="title" class="form-control" value="<?php
+                                if(isset( $_SESSION['bar_title'])){
+                                    print_r($_SESSION['bar_title']);
+                                }?>"/>
+                                <?php
+                                if(isset($title_err)){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $title_err;
+                                    echo '</span>';
+                                }?>
                             </div>
                             <div class="form-item">
                                 <label>Sub Title</label>
-                                <input type="text" class="form-control"
-                                name="sub_title"/>
+                                <input type="text" name="sub_title" class="form-control"
+                                value="<?php
+                                if(isset( $_SESSION['bar_sub_title'])){
+                                    print_r($_SESSION['bar_sub_title']);
+                                }
+                                ?>"/>
+
+                                <?php
+                                if(isset($sub_title_err)){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $sub_title_err;
+                                    echo '</span>';
+                                }?>
                             </div>
                             <div class="form-item">
                                 <label>Vertical label</label>
-                                <input type="text" class="form-control"
-                                name="vertical_label"/>
+                                <input type="text" name="vertical_label" class="form-control" value="<?php
+                                if(isset( $_SESSION['bar_vertical_label'])){
+                                    print_r($_SESSION['bar_vertical_label']);
+                                }
+                                ?>"/>
+                                <?php
+                                if(isset($vertical_label_err)){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo  $vertical_label_err;
+                                    echo '</span>';
+                                }?>
                             </div>
                             <div class="form-item">
                                 <label>Horizontal label</label>
-                                <input type="text" class="form-control"
-                                name="horizontal_label"/>
+                                <input type="text" name="horizontal_label" class="form-control" value="<?php
+                                if(isset( $_SESSION['bar_horizontal_label'])){
+                                    print_r($_SESSION['bar_horizontal_label']);
+                                }
+                                ?>"/>
+                                <?php
+                                if(isset($horizontal_label_err)){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $horizontal_label_err;
+                                    echo '</span>';
+                                }?>
                             </div>
                         </div>
                     </div>
-                    <div class="add-more">
-
-                    </div>
                     <div class="button-group">
-                        <a href="javascript:history.go(-1)" class="btn">back</a>
-                        <button type="submit" class="btn">Next</button>
+                        <?php  
+                            $base_url="http://".$_SERVER['SERVER_NAME'];
+                            echo '<a href="../" class="btn">back</a>';
+                        ?>
+                        
+                        <input type="submit" name="next" class="btn" value="next"/>
                     </div>
                 </form>
             </div>
         </main>
     </div>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>
 </html>
