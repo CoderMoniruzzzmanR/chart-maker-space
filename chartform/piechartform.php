@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 if(isset($_GET['type'])){
     $_SESSION['bar_type'] = $_GET['type'];
 }
@@ -46,6 +47,36 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
    
     if($flag) {
         echo "ok";
+        if(isset($_SESSION['bars'])){
+            $couts_y = count($_SESSION['bars']);
+            $s[]= '';
+            for($i=0; $i<$couts_y; $i++){
+                $s[$i] = " ";
+            }
+            if(isset($_SESSION['values'])){
+                for($i=0; $i<$couts_y; $i++){
+                    if($_SESSION['values'][$i]==''){
+                        $_SESSION['values'][$i] = '';
+                    }
+                    else{
+                        $_SESSION['values'][$i];
+                    }
+                }
+            }
+           
+            if(isset($_SESSION['colors'])){
+                for($i=0; $i<$couts_y; $i++){
+                    if($_SESSION['colors'][$i]==''){
+                        $length = 6;
+                        $randomletter = substr(str_shuffle("123478965abcd123478965ef123478965123478965"), 0, $length);
+                        $_SESSION['colors'][$i] = '#'.$randomletter;
+                    }
+                    else{
+                        $_SESSION['colors'][$i];
+                    }
+                }
+            }
+        }
         header('location:post_data_piechart.php');
     }
 }

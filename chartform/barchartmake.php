@@ -1,5 +1,8 @@
 <?php
 session_start();
+
+$_SESSION['row_count'] ='';
+
 if(isset($_GET['type'])){
     $_SESSION['bar_type'] = $_GET['type'];
 }
@@ -19,7 +22,7 @@ if(isset($_SESSION['chart_type'])){
 $title_err = $sub_title_err = $vertical_label_err = $horizontal_label_err  = NULL;
 $flag = true;
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-
+    
     if($_POST['bar']){
         for($i=0; $i < count($_POST['bar']); $i++) {
             if($_POST['bar'][$i] == "") {
@@ -33,6 +36,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
     }
+  
     if (!empty($_POST["title"])) {
         if(strlen($_POST['title']) > 100){
             $title_err = "Max character 100";
@@ -82,12 +86,42 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
     }
     if($flag) {
-        echo "ok";
+        if(isset($_SESSION['bars'])){
+            $couts_y = count($_SESSION['bars']);
+            $s[]= '';
+            for($i=0; $i<$couts_y; $i++){
+                $s[$i] = " ";
+            }
+            if(isset($_SESSION['values'])){
+                for($i=0; $i<$couts_y; $i++){
+                    if($_SESSION['values'][$i]==''){
+                        $_SESSION['values'][$i] = '';
+                    }
+                    else{
+                        $_SESSION['values'][$i];
+                    }
+                }
+            }
+           
+            if(isset($_SESSION['colors'])){
+                for($i=0; $i<$couts_y; $i++){
+                    if($_SESSION['colors'][$i]==''){
+                        $length = 6;
+                        $randomletter = substr(str_shuffle("123478965abcd123478965ef123478965123478965"), 0, $length);
+                        $_SESSION['colors'][$i] = '#'.$randomletter;
+                    }
+                    else{
+                        $_SESSION['colors'][$i];
+                    }
+                }
+            }
+        }
         header('location:post_data_barchart.php');
     }
 
 }
 
+$_SESSION['row_count'] ='';
 
 
 
@@ -207,6 +241,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             </div>
                         </div>
                     </div>
+                    
                     <div class="content">
                         <div>
                             <label>Bar Label</label>
@@ -264,7 +299,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         if($errRe){
                                             $errRe .remove();
                                         }
-                                        document.getElementById("newRow").innerHTML = html;
+                                       
+                                        document.getElementById("newRow").innerHTML += html;
                                         
                                         document.getElementById("row_number").value = '';
                                     }

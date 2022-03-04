@@ -4,6 +4,7 @@ session_start();
 $get_type_status ='';
 $get_chart_type = '';
 
+
 if(isset($_SESSION['bar_type'])){
     $get_type_status =  $_SESSION['bar_type'];
 }
@@ -57,14 +58,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if($_POST['color']){
         for($i=0; $i < count($_POST['color']); $i++) {
             if($_POST['color'][$i] == "") {
-                echo $color_er = "Please select color";
+                $color_er = "Please select color";
                 $flag = false;
+                $_SESSION['colors'] = $_POST['color'];
             }
             else{
                 $_SESSION['colors'] = $_POST['color'];
             }
         }
     }
+
     if ($flag) {
         header('location:download.php');
     }
@@ -123,10 +126,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                 }
                             ?>
                         </div>
+
                         <div class="content-md">
                             <div class="form-row">
                                 <div class="form-item" style="margin-right: 30px; width: 220px;">
-                                    <label>Bar
+                                    <label>Bar Label
                                         <?php
                                             if(isset($bar_er)){
                                                 echo '<span id="errorRe" style="color:red; padding-bottom:10px;">';
@@ -162,33 +166,88 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                                 echo '<div class="form-item" style="margin-right: 30px; width: 220px;">';
                                                     echo '<input type="text" name="bar[]" class="form-control" value="'.$_SESSION['bars'][$x].'"/>';
                                                 echo '</div>';
-
                                                 echo '<div class="form-item" style="width:230px; margin-right: 30px;">';
                                                     if(isset($_SESSION['values'])){
                                                         echo '<input type="number" name="value[]" class="form-input-bar number" value="'.$_SESSION['values'][$x].'"/>';
                                                     }
                                                     else{
-                                                        echo '<input type="number" name="value[]" class="form-input-bar number"/>';
+                                                        if($x>0){
+
+                                                        }
+                                                        echo '<input type="number" name="value[]" class="form-input-bar number" value="#90ed7d"/>';
                                                     }
                                                     
                                                 echo '</div>';
 
                                                 echo '<div class="form-item" style="margin-left: 30px; width: 200px; display:flex;">';
+                                                
                                                     if(isset($_SESSION['colors'])){
-                                                        echo '<input type="color" name="color[]"  class="form-control color" value="'.$_SESSION['colors'][$x].'">';
+                                                        if($x == 0){
+                                                            if($_SESSION['colors'][$x] == ' '){
+                                                                echo '<input type="color" name="color[]"  class="form-control color" value="#90ed7d">';
+                                                            }else{
+                                                                echo '<input type="color" name="color[]"  class="form-control color" value="'.$_SESSION['colors'][$x].'">';
+                                                            }
+                                                        }
+                                                        if($x == 1){
+                                                            if($_SESSION['colors'][$x] == ' '){
+                                                                echo '<input type="color" name="color[]"  class="form-control color" value="#7cb5ec">';
+                                                            }else{
+                                                                echo '<input type="color" name="color[]"  class="form-control color" value="'.$_SESSION['colors'][$x].'">';
+                                                            }
+                                                        }
+                                                        if($x == 2){
+                                                            if($_SESSION['colors'][$x] == ' '){
+                                                                echo '<input type="color" name="color[]"  class="form-control color" value="#f45b5b">';
+                                                            }else{
+                                                                echo '<input type="color" name="color[]"  class="form-control color" value="'.$_SESSION['colors'][$x].'">';
+                                                            }
+                                                        }
+                                                        if($x >2){
+                                                            echo '<input type="color" name="color[]"  class="form-control color" value="'.$_SESSION['colors'][$x].'">';
+                                                        }
+                                                       
                                                     }
                                                     else{
-                                                        echo '<input type="color" name="color[]"  class="form-control color">';
+                                                        if($x == 0){
+                                                            echo '<input type="color" name="color[]"  class="form-control color" value="#90ed7d">';
+                                                        }
+                                                        if($x == 1){
+                                                            echo '<input type="color" name="color[]"  class="form-control color" value="#7cb5ec">';
+                                                        }
+                                                        if($x == 2){
+                                                            echo '<input type="color" name="color[]"  class="form-control color" value="#f45b5b">';
+                                                        }
+                                                        if($x > 2){
+                                                            $length = 6;
+                                                            $randomletter = substr(str_shuffle("123478965abcd123478965ef123478965123478965"), 0, $length);
+                                                            echo '<input type="color" name="color[]"  class="form-control color" value="#'.$randomletter.'">';
+                                                        }
                                                     }
                                                    
-
                                                     if($x>0){
                                                         echo '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
                                                     }
                                                 echo '</div>';
                                             echo '</div>';
                                         }
+                                    }else{
+                                        echo '<div class="form-row">';
+                                            echo '<div class="form-item" style="margin-right: 30px; width: 220px;">';
+                                                echo '<input type="text" name="bar[]" class="form-control"/>';
+                                            echo '</div>';
+
+                                            echo '<div class="form-item" style="width:230px; margin-right: 30px;">';
+                                                echo '<input type="number" name="value[]" class="form-input-bar number"/>';
+                                            echo '</div>';
+
+                                            echo '<div class="form-item" style="margin-left: 30px; width: 200px; display:flex;">'; 
+                                                echo '<input type="color" name="color[]"  class="form-control color" value="#90ed7d">';
+                                            echo '</div>';
+
+                                        echo '</div>';
                                     }
+
                                 ?>
 
                             <div id="newRow">
@@ -215,9 +274,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                             html += '<input type="number" name="value[]" class="form-input-bar number"/>';
                                             html += '</div>';
 
-                                            
                                             html +='<div class="form-item" style="display:flex; margin-left: 30px; width: 200px;">';
-                                            html += '<input type="color" name="color[]"  class="form-control color"/>';
+                                            
+                                            let r = Math.floor((Math.random() * 10 )+ 1)+"f"+Math.floor((Math.random() * 10 )+ 1)+"d"+Math.floor((Math.random() * 10 )+ 1)+"c";
+
+                                            html += '<input type="color" name="color[]"  class="form-control color" value="#'+r.substring(0,6)+'"/>';
 
                                             html += '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
 
@@ -232,13 +293,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         if($errRe){
                                             $errRe .remove();
                                         }
-                                        document.getElementById("newRow").innerHTML = html;
+                                        document.getElementById("newRow").innerHTML += html;
                                         
                                         document.getElementById("row_number").value = '';
                                     }
                                 }
                             </script>
-                        </div>        
+                        </div>   
+                                
                         <div class="form-row" style="display: flex; justify-content:end; width:100%;">
                                 <div class="button-group">
                                 <?php  

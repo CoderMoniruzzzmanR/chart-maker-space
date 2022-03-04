@@ -3,6 +3,9 @@ session_start();
 
 $get_type_status ='';
 $get_chart_type = '';
+// if(isset($_SESSION['line_bars'])){
+//    echo count($_SESSION['line_bars']);
+// }
 
 if(isset($_SESSION['bar_type'])){
     $get_type_status =  $_SESSION['bar_type'];
@@ -10,7 +13,6 @@ if(isset($_SESSION['bar_type'])){
 if(isset($_SESSION['chart_type'])){
     $get_chart_type = $_SESSION['chart_type'];
 }
-
 
 if(isset($get_type_status)){
     $chart_id = $get_type_status;
@@ -25,92 +27,85 @@ if(isset($get_type_status)){
     }
 }
 
-$bar_er = $value_er = $color_er= Null;
-$flag = true;
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $bar_status = $value_status = Null;
-    if($_POST['line_label']){
-        for($i=0; $i < count($_POST['line_label']); $i++) {
-            if($_POST['line_label'][$i] == "") {
-                $bar_er = "Please enter label";
-                $flag = false;
-                $_SESSION['barsl'] = $_POST['line_label'];
-            }
-            else{
-                $_SESSION['barsl'] = $_POST['line_label'];
-                $bar_status = true;
-            }
+if(isset($_SESSION['line_bars'])){
+$len_s = count($_SESSION['line_bars']);
+    for($i =0; $i<$len_s; $i++){
+        // echo "<pre>";
+        if(!isset($_SESSION['line_bg'][$i])){
+            $leg = 6;
+            $randomletter = substr(str_shuffle("123478965abcd123478965ef123478965123478965"), 0, $leg);
+            $_SESSION['line_bg'][$i]="#".$randomletter;
         }
-    }
-
-    if($_POST['value_one']){
-        for($i=0; $i < count($_POST['value_one']); $i++) {
-            if($_POST['value_one'][$i] == "") {
-                $value_er = "*";
-                $flag = false;
-                $_SESSION['value_one'] = $_POST['value_one'];
-            }
-            else{
-                $_SESSION['value_one'] = $_POST['value_one'];
-                $value_status = true;
-            }
+        $to='';
+        if(isset($_SESSION['line_value'][$i])){
+            $to = count($_SESSION['line_value'][0]);
         }
-    }
-
-    if($_POST['values_two']){
-        for($i=0; $i < count($_POST['values_two']); $i++) {
-            if($_POST['values_two'][$i] == "") {
-                $_SESSION['values_two'] = $_POST['values_two'];
-                $value_status = true;
+        if(empty($_SESSION['line_value'][$i])){
+            $valy = array();
+            // echo $to;
+            for($j=0; $j<$to; $j++){
+                $valy[] .= 'null';
             }
-            else{
-                $_SESSION['values_two'] = $_POST['values_two'];
-                $value_status = true;
-            }
+            $_SESSION['line_value'][$i] = $valy;
         }
-    }
-
-    if($_POST['values_three']){
-        for($i=0; $i < count($_POST['values_three']); $i++) {
-            if($_POST['values_three'][$i] == "") {
-                $_SESSION['values_three'] = $_POST['values_three'];
-                $value_status = true;
-            }
-            else{
-                $_SESSION['values_three'] = $_POST['values_three'];
-                $value_status = true;
-            }
+        else{
+           $_SESSION['line_ara'][$i] = array($_SESSION['line_value'][$i] ,$_SESSION['line_bars'][$i], $_SESSION['line_bg'][$i]);
+           
+            // header('location:post_data_linechart.php');
         }
-    }
-    
-    if($_POST['bg_color']){
-        for($i=0; $i < count($_POST['bg_color']); $i++) {
-            if($_POST['bg_color'][$i] == "") {
-                echo $color_er = "Please select color";
-                $flag = false;
-            }
-            else{
-                $_SESSION['bg_color'] = $_POST['bg_color'];
-            }
-        }
-    }
-    if ($flag) {
-        header('location:download.php');
+        
     }
 }
- if(isset( $_SESSION['bg_color'])){
-    $dataCount = count($_SESSION['bg_color']);
-    $new_bg_color1 =  $new_bg_color1 =  $new_bg_color1 = '';
-    for ($i=0; $i < $dataCount; $i++) {
-        $new_bg_color1 = $_SESSION['bg_color'][0];
-        $new_bg_color2 = $_SESSION['bg_color'][1];
-        $new_bg_color3 = $_SESSION['bg_color'][2];
+
+$bar_er = $value_er = $color_er= Null;
+$flag = true;
+
+$_SESSION['line_ara'] = array();
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    $flag = true;
+    if(isset($_SESSION['line_bars'])){
+        $len_s = count($_SESSION['line_bars']);
+        for($i =0; $i<$len_s; $i++){
+            if(isset($_POST['line_value'.($i+1).''])){
+                $er = '';
+                foreach ($_POST['line_value'.($i+1).''] as $key => $value) {
+                    if(empty($value)){
+                        $er = "Values can't be fill up";
+                        $flag = false;
+                        $_SESSION['line_ara'][$i] = $_POST['line_value'.($i+1).''];
+                    }
+                    else{
+                        $_SESSION['line_ara'][$i] = $_POST['line_value'.($i+1).''];
+                    }
+                }
+                // if($flag){
+                    echo "<pre>";
+                    $_SESSION['line_ara'][$i] = array($_SESSION['line_value'][$i] = $_POST['line_value'.($i+1).''],$_SESSION['line_bars'][$i],$_SESSION['line_bg'][$i]=$_POST['bg_color'][$i]);
+                    echo "</pre>";
+                    if($_SESSION['line_value'][$i] !== ''){
+                        foreach ($_SESSION['line_value'][$i] as $key => $value) {
+                            if($value == null){
+                                $er = "Values can't be fill up";
+                                $flag = false;
+                            }
+                            else{
+                               if($flag == true){
+                                    header('location:download.php');
+                               }
+                            }
+                        }
+                    }
+                   
+                // }
+            }
+            else{
+                $bar_er = "Please enter values";
+            }
+        }
     }
-    $new_bg_color1;
-    $new_bg_color2;
-    $new_bg_color3;
-    
- }
+
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -121,6 +116,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../src/css/style.css"></link>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   
 </head>
 <body>
     <div class="main">
@@ -144,201 +141,177 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <div class="content-wrap-full">
             <!-- download.php -->
                 <form action="<?php echo $_SERVER['PHP_SELF'] ;?>" class="form" method="POST">
-                    <div class="form-wrap">
-                        <div class="chart-image">
-                            <?php  
-                                if(isset($get_chart)){
-                                    if($get_chart == 1){
-                                        echo '<img src="../src/image/line1.png"/>';
+                    <div class="form-wrap w-100" style="max-width:100%;">
+                        <?php
+                            if(isset($er)){
+                                echo '<span id="errorRe" style="color:red; padding-bottom:10px;">';
+                                echo $er;
+                                echo '</span>';
+                            }
+                        ?>
+                        <div class="form-fields" style="max-width:100%;">
+                            <div class="form-row row2" style="padding-left: 0px;">
+                                <?php 
+                                    $y = '';
+                                    if(isset($_SESSION['line_bars'])){
+                                        $length = count($_SESSION['line_bars']);
+                                       
+                                        for($i=0; $i < $length; $i++){
+                                            echo '<div class="content-main" style="width:85px;">';
+                                            echo "<label>value".($i+1)."";
+                                            
+                                            echo "</label>";
+                                            echo '<div style="display:flex;">';
+                                            echo '<div class="form-item">';
+                                           if(isset($_SESSION['line_bg'][$i])){
+                                                echo '<input type="color" name="bg_color[]" class="form-control color" value="'.$_SESSION['line_bg'][$i].'">';
+                                           }
+                                           else{
+                                            $leg = 6;
+                                            $randomletter = substr(str_shuffle("123478965abcd123478965ef123478965123478965"), 0, $leg);
+                                            echo '<input type="color" name="bg_color[]" class="form-control color" value="#'.$randomletter.'">';
+                                           }
+                                           
+                                            echo '</div>';
+                                            echo '</div>';
+                                           
+                                           if(isset($_SESSION['line_value'][$i] )){
+                                               if($_SESSION['line_value'][0]== null){
+                                                    echo '<div class="form-item">';
+                                                        echo'<input type="number" name="line_value'.($i+1).'[]" class="form-input-bar numbers" value="">';
+                                                        echo '</div>';
+                                               }
+                                               else{
+                                                    // echo '<pre>';
+                                                    // print_r();
+                                                    // // echo $v;
+                                                    // echo '<br>';
+                                                    // echo '</pre>';
+                                                    // 
+                                                    // for($j=0; $j < $y; $j++){
+                                                    //     echo "<div>";
+                                                    //    echo $_SESSION['line_value'][$i][$j];
+                                                    //    echo '<br>';
+                                                    //    echo "</div>";
+                                                    //     echo '<br>';
+                                                    // }
+                                                    // echo "ok";
+                                                    $v = $_SESSION['line_value'][$i];
+                                                    $y = count($v);
+                                                    foreach($_SESSION['line_value'][$i] as $key=>$value){
+                                                        if($value !== ''){
+                                                            echo '<div class="form-item" id="inputLineR'.$key.'">';
+                                                            echo'<input type="number" name="line_value'.($i+1).'[]" class="form-input-bar numbers" value="'.$value.'">';
+                                                            echo '</div>';
+                                                        }
+                                                        else{
+                                                            echo '<div class="form-item">';
+                                                            echo'<input type="number" name="line_value'.($i+1).'[]" class="form-input-bar numbers" value=" ">';
+                                                            echo '</div>';
+                                                        }
+                                                    }
+
+                                                    //     // if(){
+                                                    //     //     echo '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 6px; line-height: 10px;height: 30px;">remove</button></div>';
+                                                    //     // }
+                                                    // }  
+                                                   
+                                                   
+                                               }
+                                               
+                                           }
+                                        //    else{
+                                        //         echo '<div class="form-item">';
+                                        //         echo'<input type="number" name="line_value'.($i+1).'[]" class="form-input-bar numbers">';
+                                        //         echo '</div>';
+                                        //    }
+                                          
+
+                                            // echo '<div class="form-item">';
+                                            // echo'<input type="number" name="line_value'.($i+1).'[]" class="form-input-bar numbers">';
+                                            // echo '</div>';
+                                            
+                                            echo '</div>';
+                                        }
                                     }
-                                    elseif($get_chart == 2){
-                                        echo '<img src="../src/image/line2.png"/>';
-                                    }
-                                    elseif($get_chart == 3){
-                                        echo '<img src="../src/image/line3.png"/>';
-                                    }
-                                    else{
-                                        echo 'Image load error';
-                                    }
-                                }
-                            ?>
-                        </div>
-                        <div class="form-fields">
-                            <div class="form-row row2">
+                                    // if(isset($y)){
+                                    //     if($y>0){
+                                    //         echo '<div class="content-main" style="width:85px;">';
+                                    //         echo '<div style="font-size:14px;padding:0px 12px; margin: 6px; line-height: 10px;height: 40px;"></div>';
+                                    //         echo '<div style="font-size:14px;padding:0px 12px; margin: 6px; line-height: 10px;height: 40px;"></div>';
+                                    //         echo '<div style="font-size:14px;padding:0px 12px; margin: 6px; line-height: 10px;height: 40px;"></div>';
+                                    //         for($i= 0; $i<$y; $i++){
+                                    //             if($i>0){
+                                    //                 // echo $i;
+                                    //                 echo '<div style="height: 35px; padding:6px; padding-left:0px;">';
+                                                    
+                                    //                 echo '<button id="removeRow'.$i.'" class="btn" style="font-size:14px;padding:0px 12px; margin-top: 0px; margin-left:6px;line-height: 10px;height: 30px;" onclick="reovData'.$i.'()">remove</button>';
+                                    //                 echo '</div>';
+                                                   
+                                    //                 echo '<script type="text/javascript">';
+                                    //                     echo"$(document).on('click', '#removeRow".$i."', function (e) {";
+                                    //                     echo "e.preventDefault();";
+
+                                    //                     // echo 'var inputL'.$i.'= document.getElementById("inputLineR'.$i.'").remove();';
+
+                                    //                     // echo 'var inRo'.$i.' = document.getElementById("removeRow'.$i.'")';
+
+                                    //                     echo "$('#inputLineR".$i."').remove()";
+
+                                    //                     // echo "$(inRo".$i.").remove()";
+
+                                    //                     echo "});";
+                                    //                 echo '</script>';
+                                    //             }
+
+                                    //         }
+                                    //         echo '</div>';
+                                    //     }
+                                    // }
+                                   
+                                   
+                                ?>
                             </div>
-                            <div class="form-row row2">
-                                <div  class="in-row">
-                                    <div class="inner-row">
-                                    <div class="add-more ">
-                                    <div>
-                                        <label>Line Label</label>
-                                    </div>
-                                    <div class="form-item">
-                                        <?php
-                                         if(isset( $_SESSION['barsl'])){
-                                            foreach ($_SESSION['barsl'] as $x=>$bar){
-                                                // echo $x;
-                                                $b_id ='';
-                                                $b_text = '';
-                                                if($x>0){
-                                                    $b_id = $x;
-                                                    $b_text = 'id="inputBarName'.$b_id.'"';
-                                                }
-                                                echo'<input '.$b_text.'type="text" name="line_label[]" class="form-control bar-input" placeholder="Enter label name" autocomplete="off" value="'.$bar.'">';
-                                            }
-                                        }
-                                        else{
-                                            echo '<input type="text" name="line_label[]" class="form-control bar-input" placeholder="Enter label name" autocomplete="off">';
-                                        }
-                                        ?>
-                                        <?php
-                                        if(isset($bar_er)){
-                                            echo '<span style="color:red; padding-bottom:10px; display:block;">';
-                                            echo $bar_er;
-                                            echo '</span>';
-                                        }?>
-                                    </div>
-                                </div>
-                                <div class="content-main" style="width:85px;">
-                                    <label>
-                                        value-1
-                                        <?php
-                                        if(isset($value_er)){
-                                            echo '<span style="color:red;">';
-                                            echo $value_er;
-                                            echo '</span>';
-                                        }?>
-                                    </label>
-                                    <div style="display:flex;">
-                                        <input type="color" name="bg_color[]" class="form-control color" value ="<?php if(isset($new_bg_color1)){echo $new_bg_color1;}?>">
-                                    </div>
-                                    <div class="form-item">
-                                        <?php
-                                         if(isset( $_SESSION['value_one'])){
-                                            foreach ($_SESSION['value_one'] as $y=>$value){
-                                                $v_id ='';
-                                                $v_text = '';
-                                                if($y>0){
-                                                    $v_id = $y;
-                                                    $v_text = 'id="valueInputBar'.$v_id.'"';
-                                                }
-                                                echo'<input '.$v_text.' type="number" name="value_one[]" class="form-control value-input" autocomplete="off" value="'.$value.'">';
-                                            }
-                                        }
-                                        else{
-                                            echo '<input type="number" name="value_one[]" class="form-control value-input" autocomplete="off">';
-                                        }
-                                        ?>
-                                         
-                                    </div>
-                                </div>
-                                <div class="content-main" style="width:85px;">
-                                    <label>value-2</label>
-                                    <div style="display:flex;">
-                                        <input type="color" name="bg_color[]" class="form-control color" value ="<?php if(isset($new_bg_color1)){echo $new_bg_color2;}?>">
-                                    </div>
-                                    <div class="form-item">
-                                        <?php
-                                         if(isset( $_SESSION['values_two'])){
-                                            foreach ($_SESSION['values_two'] as $y=>$value){
-                                                $v_id ='';
-                                                $v_text = '';
-                                                if($y>0){
-                                                    $v_id = $y;
-                                                    $v_text = 'id="valueInputTwoBar'.$v_id.'"';
-                                                }
-                                                echo'<input '.$v_text.' type="number" name="values_two[]" class="form-control value-input" autocomplete="off" value="'.$value.'">';
-                                            }
-                                        }
-                                        else{
-                                            echo '<input type="number" name="values_two[]" class="form-control value-input" autocomplete="off">';
-                                        }
-                                        ?>
-                                    </div>
-                                </div>
-                                <div class="content-main" >
-                                    <label>value-3</label>
-                                    <div style="display:flex; width:150px;">
-                                        <input type="color" name="bg_color[]" class="form-control color" value ="<?php if(isset($new_bg_color1)){echo $new_bg_color3;}?>">
-                                    </div>
-                                    <div class="form-item">
-                                        <?php
-                                         if(isset( $_SESSION['values_three'])){
-                                            foreach ($_SESSION['values_three'] as $y=>$value){
-                                                $v_id ='';
-                                                $v_text = '';
-                                                if($y>0){
-                                                    $v_id = $y;
-                                                    $v_text = 'id="valueInputThreeBar'.$v_id.'"';
-                                                }
-                                                echo '<div style="display:flex; width:150px;">';
-                                                echo'<input '.$v_text.' type="number" name="values_three[]" class="form-control value-input" autocomplete="off" value="'.$value.'">';
-                                                if($y>0){
-                                                    echo '<a href="javascript:void(0)" class="btn" id="removData'.$y.'" style="display:inline-block;font-size:14px; padding:0px 15px; margin: 5px; line-height: 30px;
-                                                    height: 30px;" onClick="removData'.$y.'()">Remove</a>';
-                                                }
-                                                echo '</div>';
-                                            }
-                                        }
-                                        else{
-                                            echo '<input type="number" name="values_three[]" class="form-control value-input" autocomplete="off">';
-                                        }
-                                        ?>
-                                        
-                                    </div>
-                                </div>
-                               
-                                
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-row row2" id="newRow"></div>
-                            <div class="form-row">
-                               
+                            <div class="form-row row2" id="newRow" style="padding-left: 0px;"></div>
+                            <div class="form-row" style="padding-left: 0px;">
                                 <div>
-                                    <input type="number" name="row_number" id="row_number" class="form-control m-input"> 
-                                    <button id="addRowMore" type="button" class="btn btn-trans btn-left" onclick="getInputValue();">+ Add Row More</button>
+                                    <input type="number" name="col_number" id="row_number" class="form-input-bar number"> 
+
+                                    <input type="hidden" name="row_number" id="col_number" class="form-input-bar number" value="<?php if(isset($_SESSION['line_bars'])){echo count($_SESSION['line_bars']);}?>"> 
+
+                                    <button id="addRowMore" type="button" class="add-more-btn" onclick="getInputValue();">+ Add Row More</button>
                                     <script>
                                         function getInputValue(){
+                                            var inputValCol = document.getElementById("col_number").value;
                                             var inputVal = document.getElementById("row_number").value;
-                                            if(inputVal !== ''){
-                                                var html = '';
-                                                for (let i = 0; i < inputVal; i++) {
-                                                    html += '<div class="in-row" id="inputFormRow">';
-                                                    html += '<div class="inner-row">';
-                                                    
-                                                    html +='<div class="add-more"><div class="form-item"><input type="text" name="line_label[]" class="form-control m-input" placeholder="Enter label" autocomplete="off"></div> </div>';
 
-                                                    html += '<div class="content-main" style="width:85px;"> <div class="form-item"><input type="number" name="value_one[]" class="form-control value-input"/></div></div>';
+                                            var html = '';
 
-                                                    html += '<div class="content-main" style="width:85px;"> <div class="form-item"><input type="number" name="values_two[]" class="form-control value-input"/></div></div>';
-                                                  
-                                                    html += '<div class="content-main">';
+                                            for(var j = 0; j < inputVal; j++) {
+                                                html += '<div class="content-main" style="width:100%; display:flex;" id="inputFormRow">';
 
-                                                    html += '<div class="form-item">';
-                                                    html += '<div style="display:flex; width:150px;">';
-
-                                                    html += '<input type="number" name="values_three[]" class="form-control value-input"/>';
-                                                    html += '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
+                                                for(var i = 0; i < inputValCol; i++) {
+                                                    html += '<div class="form-item" id="inrow'+i+'" style="width:85px;">';
+                                                    html += '<input type="number" name="line_value'+(i+1)+'[]" class="form-input-bar numbers" >'; 
                                                     html += '</div>';
-
-                                                    html += '</div>';
-                                                    html += '</div>';
-                                                    html += '</div>';
-                                                    html += '</div>';
-
+                                                    //
                                                 }
-                                                document.getElementById("newRow").innerHTML = html;
                                                 
-                                                document.getElementById("row_number").value = '';
+                                                html += '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 6px; line-height: 10px;height: 30px;">remove</button></div>';
                                             }
+
+                                            document.getElementById("newRow").innerHTML += html;
+
+                                            document.getElementById("row_number").value = '';
                                         }
+                                        
                                     </script>
                                 </div>
                                 
                             </div>
                         </div>
                     </div>
+
                     <div class="button-group">
                         <?php  
                             $base_url="http://".$_SERVER['SERVER_NAME'];
@@ -351,45 +324,47 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             </div>
         </main>
     </div>
-
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+ 
     <script type="text/javascript">
         $(document).on('click', '#removeRow', function () {
             $(this).closest('#inputFormRow').remove();
+            
         });
+       
+      
     </script>
 
     <?php
-        if(isset( $_SESSION['value_one'])){
-            foreach($_SESSION['value_one'] as $z=>$value){
-                if($z>0){
-                    echo '<script type="text/javascript">';
-                    echo ' function removData'.$z.'(){';
+        // if(isset( $_SESSION['value_one'])){
+        //     foreach($_SESSION['value_one'] as $z=>$value){
+        //         if($z>0){
+        //             echo '<script type="text/javascript">';
+        //             echo ' function removData'.$z.'(){';
 
-                    echo 'var barInputId'.$z.' = document.getElementById("inputBarName'.$z.'");';
+        //             echo 'var barInputId'.$z.' = document.getElementById("inputBarName'.$z.'");';
 
-                    echo 'var valueInputId'.$z.' = document.getElementById("valueInputTwoBar'.$z.'");';
+        //             echo 'var valueInputId'.$z.' = document.getElementById("valueInputTwoBar'.$z.'");';
 
-                    echo 'var valueInputTwoId'.$z.' = document.getElementById("valueInputBar'.$z.'");';
+        //             echo 'var valueInputTwoId'.$z.' = document.getElementById("valueInputBar'.$z.'");';
 
-                    echo 'var valueInputThreeId'.$z.' = document.getElementById("valueInputThreeBar'.$z.'");';
+        //             echo 'var valueInputThreeId'.$z.' = document.getElementById("valueInputThreeBar'.$z.'");';
 
-                    echo 'var btnRInputId'.$z.' = document.getElementById("removData'.$z.'");';
+        //             echo 'var btnRInputId'.$z.' = document.getElementById("removData'.$z.'");';
 
-                    echo 'barInputId'.$z.'.remove();';
-                    echo 'valueInputId'.$z.'.remove();';
-                    echo 'valueInputTwoId'.$z.'.remove();';
-                    echo 'valueInputThreeId'.$z.'.remove();';
-                    echo 'barInputId'.$z.'.remove();';
-                    echo 'btnRInputId'.$z.'.remove();';
+        //             echo 'barInputId'.$z.'.remove();';
+        //             echo 'valueInputId'.$z.'.remove();';
+        //             echo 'valueInputTwoId'.$z.'.remove();';
+        //             echo 'valueInputThreeId'.$z.'.remove();';
+        //             echo 'barInputId'.$z.'.remove();';
+        //             echo 'btnRInputId'.$z.'.remove();';
 
-                    echo '}';
+        //             echo '}';
 
-                    echo '</script>';
-                    echo "<br>";
-                }
-            }
-        }
+        //             echo '</script>';
+        //             echo "<br>";
+        //         }
+        //     }
+        // }
     ?>
 
 

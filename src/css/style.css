@@ -9,12 +9,11 @@ body{
 }
 .content{
     max-width: 1024px;
-    width: 100%;
     margin: auto;
 }
 
 .tab-nav{
-    width: 100%;
+    max-width: 100%;
     padding-top: 60px;
 }
 .tab-nav .nav{
@@ -63,6 +62,7 @@ img{
 }
 .card .chart-image img{
     height: 220px;
+    width: 100%;;
 }
 .card-footer{
     background-color: rgb(240, 237, 232);
@@ -126,6 +126,8 @@ img{
     text-transform: capitalize;
     cursor: pointer;
     margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .btn:first-child{
    margin-left: 0px;
@@ -240,6 +242,9 @@ img{
     margin-left: 0px;
     width: 60px;
 }
+.form-input-bar.numbers{
+    width: 40px;
+}
 .add-more-btn{
     background-color: transparent;
     font-size: 16px;
@@ -253,4 +258,137 @@ img{
 }
 .content-md{
     width: 70%;
+}
+
+@media (max-width: 1100px) {
+    .content{
+        padding: 15px;
+    }
+    .form{
+        max-width: 100%;
+    }
+    .form .content{
+        width: 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    /* .content{
+        padding: 15px;
+        width: auto;
+    } */
+    .row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .tab-nav .nav .nav-item {
+        font-size: 16px;
+    }
+    .chart-heading h2 {
+        font-size: 16px;
+    }
+    .preview-chart{
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-bottom : 30px !important;
+    }
+    .btn{
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+    #urlInputCopy{
+        display:block;
+        margin-left: 20px !important;
+    }
+    .copy_area{
+        margin-left: 20px;
+    }
+    .left-content{
+        max-width: 100%;
+    }
+    .right-content{
+        max-width: 100%;
+    }
+    .form-wrap .chart-image{
+        width: 100%;
+    }
+    .form-wrap .form-row{
+        padding-left: 0px;
+    }
+    .content-md{
+        padding-top: 30px;
+        width: 100%;
+    }
+    .form .content{
+        padding-left: 0px;
+    }
+    .form label {
+        font-size: 18px;
+    }
+    .form .form-control{
+        font-size: 14px;
+    }
+    .right-content .content-main{
+        padding-top: 30px;
+        padding-left : 0px;
+    }
+}
+
+@media (max-width: 640px) {
+    .left-content{
+        max-width: 100%;
+    }
+    .right-content{
+        max-width: 100%;
+    }
+    .right-content .content-main{
+        padding-top: 30px;
+        padding-left : 0px;
+    }
+    .form .content{
+        padding-left: 0px;
+    }
+    .form label {
+        font-size: 18px;
+    }
+    .form .form-control{
+        font-size: 14px;
+    }
+    .form-wrap .chart-image{
+        width: 100%;
+    }
+    .form-wrap .form-row{
+        padding-left: 0px;
+    }
+    .content-md{
+        padding-top: 30px;
+        width: 100%;
+    }
+    #myChart{
+        height: 400px !important;
+    }
+    
+}
+
+@media (max-width: 576px) {
+    /* .content{
+        padding: 15px;
+        width: auto;
+    } */
+    .row {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .tab-nav .nav{
+        display: block;
+        text-align: center;
+    }
+    .tab-nav .nav .nav-item{
+        display: block;
+        padding-top: 10px;
+    }
+    /* .btn{
+        display: block;
+    } */
+    #myChart{
+        height: 350px !important;
+    }
 }

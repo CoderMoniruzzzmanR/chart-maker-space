@@ -1,3 +1,8 @@
+<?php 
+session_start();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +44,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <h3>
-                                        Column with driildown
+                                       Bar chart
                                     </h3>
                                 </div>
                             </div>
@@ -53,7 +58,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <h3>
-                                       Update option after render
+                                        Bar chart render
                                     </h3>
                                 </div>
                             </div>
@@ -67,7 +72,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <h3>
-                                       3D Cylinder
+                                       3D Bar chart
                                     </h3>
                                 </div>
                             </div>
@@ -98,6 +103,20 @@
                 </div>
                 <div class="row">
                     <div class="column">
+                        <a href="./chartform/piechartform.php?type=3&&type_name=pie" class="content-wrap">
+                            <div class="card">
+                                <div class="chart-image">
+                                    <img src="./src/image/pie3.png"/>
+                                </div>
+                                <div class="card-footer">
+                                    <h3>
+                                       pie chart
+                                    </h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="column">
                         <a href="./chartform/piechartform.php?type=1&&type_name=polarArea" class="content-wrap">
                             <div class="card">
                                 <div class="chart-image">
@@ -105,7 +124,7 @@
                                 </div>
                                 <div class="card-footer">
                                     <h3>
-                                        Column with driildown
+                                        polarArea chart
                                     </h3>
                                 </div>
                             </div>
@@ -119,26 +138,13 @@
                                 </div>
                                 <div class="card-footer">
                                     <h3>
-                                        Column with driildown
+                                        Doughnut Chart
                                     </h3>
                                 </div>
                             </div>
                         </a>
                     </div>
-                    <div class="column">
-                        <a href="./chartform/piechartform.php?type=3&&type_name=pie" class="content-wrap">
-                            <div class="card">
-                                <div class="chart-image">
-                                    <img src="./src/image/pie3.png"/>
-                                </div>
-                                <div class="card-footer">
-                                    <h3>
-                                        Column with driildown
-                                    </h3>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                    
                 </div>
             </div>
         </main>

@@ -62,38 +62,17 @@ if(isset($get_user_id)){
         $ghaph_name_type =  $after_assoc['chart_type'];
     }
 
-    $count_line_label = '';
-    if(isset( $after_assoc['value_one'])){
-        $ghaph_value_one =  $after_assoc['value_one'];
-        $count_line_label = count(json_decode($ghaph_value_one));
-    }
-
-    if(isset( $after_assoc['values_two'])){
-        $ghaph_values_two =  $after_assoc['values_two'];
-    }
-
-    if(isset( $after_assoc['values_three'])){
-        $ghaph_values_three =  $after_assoc['values_three'];
-    }
-
-
-    if(isset( $after_assoc['bg_color'])){
-        $ghaph_bg_color =  $after_assoc['bg_color'];
-        $bg_color_line = json_decode($ghaph_bg_color);
-        $dataCount = count($bg_color_line);
-        $new_bg_color1 =  $new_bg_color1 =  $new_bg_color1 = '';
-        for ($i=0; $i < $dataCount; $i++) {
-            $new_bg_color1 = $bg_color_line[0];
-            $new_bg_color2 = $bg_color_line[1];
-            $new_bg_color3 = $bg_color_line[2];
-        }
-        $new_bg_color1;
-        $new_bg_color2;
-        $new_bg_color3;
-    }
     
-    if(isset( $after_assoc['line_label'])){
-        $ghaph_line_label =  $after_assoc['line_label'];
+    // if(isset( $after_assoc['line_label'])){
+    //     $ghaph_line_label =  $after_assoc['line_label'];
+    // }
+
+    if(isset($after_assoc['line_label'])){
+        $ghaph_line = $after_assoc['line_label'];
+        echo "<pre>";
+        // print_r(json_decode($ghaph_line ));
+        echo "</pre>";
+        // echo "ok";
     }
 }
 ?>
@@ -118,45 +97,60 @@ if(isset($get_user_id)){
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const labels = <?php if($ghaph_name_type == "line"){echo "''";}else{echo $bar_name;}?>;
+        const labels = <?php if($ghaph_name_type == "line"){ echo '""';}else {echo $bar_name;}?>;
         const data = {
             labels: <?php if($ghaph_name_type == "line"){
-                if(isset($ghaph_line_label)){
-                echo $ghaph_line_label;
-            }}else{echo "labels";}?>,
+                    if(isset($after_assoc['line_label'])){
+                        $ghaph_line = $after_assoc['line_label'];
+                        $l = '';
+                        $counts_label = 0;
+                        $s = '';
+                        $s = json_decode($ghaph_line);
+                        $l = count($s);
+                        echo "[";
+                        for($i=0; $i < $l; $i++){
+                            echo '"'.$counts_label +=10;
+                            echo '"';
+                            echo ",";
+                        }
+                        echo "]";
+                    }
+                } else{echo "labels";}?>,
             datasets: [<?php 
                     if($ghaph_name_type == "line"){
-                        if(isset($ghaph_value_one)){
-                            echo "{";
-                            echo "data:$ghaph_value_one,";
-                            echo "borderColor: '$new_bg_color1',";
-                            echo "backgroundColor: '$new_bg_color1',";
-                            echo "fill: false";
-                            echo "},";
+                        if(isset($after_assoc['line_label'])){
+                            $ghaph_line = $after_assoc['line_label'];
+                            $s = '';
+                            $l = '';
+                            $s = json_decode($ghaph_line);
+                            $l = count($s);
+                            $u = 0;
+                            foreach($s as $key=>$ful){
+                                // $u++;
+                                // echo $u;
+                                echo "{";
+                                foreach($ful as $key=>$val){
+                                    if($key == 1){
+                                        echo "label:'".$val."',";
+                                    }
+                                    if($key == 0){
+                                        echo "data:".json_encode($val).",";
+                                    }
+                                    if($key == 2){
+                                        echo "backgroundColor: '".$val."',";
+                                        echo "borderColor:'".$val."',";
+                                        echo "fill: false";
+                                    }
+                                }
+                                echo "},";
+                            }
                         }
-                        if(isset($ghaph_values_two)){
 
-                            
-                            echo "{";
-                            echo "data:$ghaph_values_two,";
-                            echo "borderColor: '$new_bg_color2',";
-                            echo "backgroundColor:'$new_bg_color2',";
-                            echo "fill: false";
-                            echo "},";
-                        }
-                        if(isset( $ghaph_values_three)){
-                            echo "{";
-                            echo "data:$ghaph_values_three,";
-                            echo "borderColor: '$new_bg_color3',";
-                            echo "backgroundColor:'$new_bg_color3',";
-                            echo "fill: false";
-                            echo "}";
-                        }
                     } 
                     else{
                         echo "{backgroundColor: $bar_color,borderColor:  $bar_color,data: $bar_value,}";
                     }
-                ?>,
+                ?>
             ]
         };
         const logo = new Image();
@@ -167,7 +161,7 @@ if(isset($get_user_id)){
                 const {ctx, chartArea:{top, bottom, left, right}} = chart;
                 ctx.save();
                 if(logo.complete){
-                    ctx.drawImage(logo, (ctx.canvas.offsetWidth - 300), (ctx.canvas.offsetHeight - 300), 200, 200);
+                    ctx.drawImage(logo, (ctx.canvas.offsetWidth - 100), (ctx.canvas.offsetHeight - 100), 80, 80);
                 }
             }
         }
@@ -207,7 +201,7 @@ if(isset($get_user_id)){
                 plugins: {
                     legend: {
                         <?php  
-                        if($ghaph_name_type == "bar" || $ghaph_name_type == "line"){
+                        if($ghaph_name_type == "bar"){
                             echo "display: false";
                         }
                         else{
