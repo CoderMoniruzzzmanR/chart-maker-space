@@ -1,5 +1,10 @@
 <?php
 session_start();
+require '../database/db.php';
+
+if(isset($_GET['u_id'])){
+    $_SESSION['u_id'] = $_GET['u_id'];
+}
 
 $_SESSION['row_count'] ='';
 
@@ -21,6 +26,46 @@ if(isset($_SESSION['chart_type'])){
 
 $title_err = $sub_title_err = $vertical_label_err = $horizontal_label_err  = NULL;
 $flag = true;
+
+
+$_SESSION['row_count'] ='';
+
+if(isset($_GET['u_id'])){
+    $_SESSION['u_id'] = $_GET['u_id'];
+    $sql = "SELECT * FROM chart where user_id = '". $_SESSION['u_id']."' "; 
+    $result = mysqli_query($db_conection, $sql);
+    if($result){
+        $after_assoc = mysqli_fetch_assoc($result);
+        // print_r($after_assoc);
+        if(isset($after_assoc['title'])){
+            $_SESSION['bar_title'] = $after_assoc['title'];
+        }
+        if(isset($after_assoc['sub_title'])){
+           $_SESSION['bar_sub_title'] = $after_assoc['sub_title'];
+        }
+        if(isset($after_assoc['horizontal_title'])){
+            $x = json_decode($after_assoc['horizontal_title']);
+            $_SESSION['bar_horizontal_label'] = $x;
+        }
+        if(isset($after_assoc['vertical_title'])){
+           $_SESSION['bar_vertical_label'] = $after_assoc['vertical_title'];
+        }
+        if(isset($after_assoc['bar_name'])){
+            $f = json_decode($after_assoc['bar_name']);
+            $_SESSION['bars']=$f;
+            $couts_l = count($_SESSION['bars']);
+        }
+        // if(isset($after_assoc['bar_color'])){
+        //     print_r($after_assoc['bar_color']);
+        // }
+        if(isset($after_assoc['bar_color'])){
+            $t = json_decode($after_assoc['bar_color']);
+            $_SESSION['colors'] = $t;
+        }
+    }
+}
+
+
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     
     if($_POST['bar']){
@@ -115,15 +160,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     }
                 }
             }
+           
         }
         header('location:post_data_barchart.php');
     }
 
 }
 
-$_SESSION['row_count'] ='';
-
-
+// print_r($_SESSION['colors']);
 
 ?>
 
@@ -155,7 +199,7 @@ $_SESSION['row_count'] ='';
                     </li>
                 </ol>
             </div>
-
+        
             <!-- //post_data_barchart.php -->
             <div class="content-wrap">
                 <form action="<?php echo $_SERVER['PHP_SELF'] ;?>?type=<?php echo $get_type_status;?>&&type_name=<?php echo $get_chart_type;?>" class="form" method="POST">
@@ -177,6 +221,75 @@ $_SESSION['row_count'] ='';
                                     }
                                 }
                             ?>
+                        </div>
+                        <div class="content" style="margin-top:15px;">
+                            <div>
+                                <label>Bar Label</label>
+                            </div>
+                            <?php
+                                if(isset( $_SESSION['bars'])){
+                                    foreach ($_SESSION['bars'] as $x=>$bar){
+                                        // echo $x;
+                                        $b_id ='';
+                                        $b_text = '';
+                                        if($x>0){
+                                            $b_id = $x;
+                                            $b_text = 'id="inputFormRow"';
+                                        }
+                                        echo '<div class="form-item" '.$b_text.'>';
+                                        echo'<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name" value="'.$bar.'">';
+                                        if($x>0){
+                                        echo '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
+                                        }
+                                        echo '</div>';
+                                    }
+                                }
+                                else{
+                                    echo ' <div class="form-item">';
+                                    echo '<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name"/>';
+                                    echo '</div>';
+                                }
+                            ?>
+                            <div id="newRow"></div>
+                                <?php
+                                    if(isset($bar_er)){
+                                        echo '<span id="errorRe" style="color:red; padding-bottom:10px; display:block;">';
+                                        echo $bar_er;
+                                        echo '</span>';
+                                    }
+                                ?>
+                            <div>
+                                <input type="number" name="row_number" id="row_number" class="form-input-bar number"> 
+                                <button id="addRowMore" type="button" class="add-more-btn" onclick="getInputValue();">+ Add Row More</button>
+                                <script>
+                                    function getInputValue(){
+                                        var inputVal = document.getElementById("row_number").value;
+                                        if(inputVal !== ''){
+                                            var html = '';
+                                            for (let i = 0; i < inputVal; i++) {
+                                                html += ' <div class="form-item" id="inputFormRow">';
+                                                
+                                                html +='<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name"/>';
+
+                                                html += '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
+                                                html += '</div>';
+
+                                            }
+                                            $errRe = document.getElementById("errorRe");
+                                            if($errRe){
+                                                $errRe .remove();
+                                            }
+                                        
+                                            document.getElementById("newRow").innerHTML += html;
+                                            
+                                            document.getElementById("row_number").value = '';
+                                        }
+                                    }
+
+
+                                </script>
+                            </div>       
+
                         </div>
                     </div>
                     
@@ -242,75 +355,7 @@ $_SESSION['row_count'] ='';
                         </div>
                     </div>
                     
-                    <div class="content">
-                        <div>
-                            <label>Bar Label</label>
-                        </div>
-                        <?php
-                            if(isset( $_SESSION['bars'])){
-                                foreach ($_SESSION['bars'] as $x=>$bar){
-                                    // echo $x;
-                                    $b_id ='';
-                                    $b_text = '';
-                                    if($x>0){
-                                        $b_id = $x;
-                                        $b_text = 'id="inputFormRow"';
-                                    }
-                                    echo '<div class="form-item" '.$b_text.'>';
-                                    echo'<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name" value="'.$bar.'">';
-                                    if($x>0){
-                                    echo '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
-                                    }
-                                    echo '</div>';
-                                }
-                            }
-                            else{
-                                echo ' <div class="form-item">';
-                                echo '<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name"/>';
-                                echo '</div>';
-                            }
-                        ?>
-                        <div id="newRow"></div>
-                            <?php
-                                if(isset($bar_er)){
-                                    echo '<span id="errorRe" style="color:red; padding-bottom:10px; display:block;">';
-                                    echo $bar_er;
-                                    echo '</span>';
-                                }
-                            ?>
-                        <div>
-                            <input type="number" name="row_number" id="row_number" class="form-input-bar number"> 
-                            <button id="addRowMore" type="button" class="add-more-btn" onclick="getInputValue();">+ Add Row More</button>
-                            <script>
-                                function getInputValue(){
-                                    var inputVal = document.getElementById("row_number").value;
-                                    if(inputVal !== ''){
-                                        var html = '';
-                                        for (let i = 0; i < inputVal; i++) {
-                                            html += ' <div class="form-item" id="inputFormRow">';
-                                            
-                                            html +='<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name"/>';
-
-                                            html += '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
-                                            html += '</div>';
-
-                                        }
-                                        $errRe = document.getElementById("errorRe");
-                                        if($errRe){
-                                            $errRe .remove();
-                                        }
-                                       
-                                        document.getElementById("newRow").innerHTML += html;
-                                        
-                                        document.getElementById("row_number").value = '';
-                                    }
-                                }
-
-
-                            </script>
-                        </div>       
-
-                    </div>
+                   
                     <div class="button-group">
                         <?php  
                             echo '<a href="../" class="btn">back</a>';

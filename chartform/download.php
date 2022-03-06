@@ -126,8 +126,35 @@ if(isset($_SESSION['line_ara'])){
     echo '</pre>';
 }
 
+if(isset($_SESSION['u_id'])){
+    $session_eid = '';
+    $session_eid =$_SESSION['u_id'];
+}
 
+$select_chart_db = " SELECT * FROM chart";
+$result = mysqli_query($db_conection, $select_chart_db);
+$target_edvalue = '';
+$target_edid ='';
+if(isset($session_eid)){
+    foreach ($result as $value) {
+        if($value['user_id'] == $session_eid){
+            $target_edvalue = $value['user_id'];
+            $target_edid = $value['id'];
+        }
+    }
+}
+echo "<br>";
 $session_id = session_id();
+if(isset($target_edvalue)){
+    if($session_id !== $target_edvalue){
+        // echo "not match";
+        // echo "<br>";
+        $target_edid;
+        // echo "<br>";
+        $target_edvalue;
+    }
+}
+
 
 $select_chart_db = " SELECT * FROM chart";
 $result = mysqli_query($db_conection, $select_chart_db);
@@ -145,6 +172,13 @@ if(isset($_POST['getcode'])){
                 }
             }
         }
+
+        if(isset($target_edvalue)){
+            if($session_id !== $target_edvalue){
+                $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$target_edvalue',water_image=NULL,values_two='$d_value_two',values_three='$d_value_three',bg_color='$d_bg_color',value_one='$d_value_one',line_label='$de_lines' WHERE id=$target_edid";
+                $result = mysqli_query($db_conection, $update);
+            }
+        }        
         // echo $target_value;
         if($session_id !== $target_value){
             $u = '';
@@ -205,6 +239,14 @@ if(isset($_POST['getcode'])){
                         }
                     }
                 }
+
+                if(isset($target_edvalue)){
+                    if($session_id !== $target_edvalue){
+                        $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$target_edvalue',water_image='$image_name',values_two='$d_value_two',values_three='$d_value_three',bg_color='$d_bg_color',value_one='$d_value_one',line_label='$de_lines' WHERE id=$target_edid";
+                        $result = mysqli_query($db_conection, $update);
+                    }
+                }  
+
                 if($session_id !== $target_value){
                     $u = '';
                     // $u = $get_type_status.$get_chart_type.$session_id;
@@ -251,6 +293,13 @@ if(isset($get_iframe_target_id)){
 
 if(isset($after_assoc['user_id'])){
     $user_frame = $after_assoc['user_id'];
+}
+ 
+if(isset($_SESSION['u_id'])){
+    $prev_ue = $_SESSION['u_id'];
+    if($user_frame !== $prev_ue){
+        $user_frame = $prev_ue;
+    }
 }
 
 if(isset($after_assoc['water_image'])){
@@ -371,24 +420,30 @@ if(isset($after_assoc['line_label'])){
                         echo '<button class="btn" onclick="myUrlCopy()">copy to share</button>';
                     }
                 ?>
-                <div class="btn-main">
-                    <div class="button-group">
-                        <?php  
-                            $base_url="http://".$_SERVER['SERVER_NAME'];
-                            if($get_chart_type == "pie" || $get_chart_type == "doughnut" || $get_chart_type == "polarArea"){
-                                echo '<a href="../chartform/post_data_piechart.php" class="btn">back</a>';
-                            }
-                            if($get_chart_type == "bar"){
-                                echo '<a href="../chartform/post_data_barchart.php" class="btn">back</a>';
-                            }
-                            if($get_chart_type == "line"){
-                                echo '<a href="../chartform/post_data_linechart.php" class="btn">back</a>';
-                            }
-                        ?>
-                       
-                    </div>
+            <div class="btn-main">
+                <div class="button-group">
+                    <?php  
+                        $base_url="http://".$_SERVER['SERVER_NAME'];
+                        if($get_chart_type == "pie" || $get_chart_type == "doughnut" || $get_chart_type == "polarArea"){
+                            echo '<a href="../chartform/post_data_piechart.php" class="btn">back</a>';
+                        }
+                        if($get_chart_type == "bar"){
+                            echo '<a href="../chartform/post_data_barchart.php" class="btn">back</a>';
+                        }
+                        if($get_chart_type == "line"){
+                            echo '<a href="../chartform/post_data_linechart.php" class="btn">back</a>';
+                        }
+                    ?>
+                    
                 </div>
-
+            </div>
+            <div  class="copy_area">
+                <div class="btn-main">
+                    <a href="../view_chart_list.php" class="btn">
+                        Chart list 
+                    </a>
+                </div>
+            </div>
             <div class="copy_area">
                 <div class="btn-main">
                     <div>
@@ -447,17 +502,24 @@ if(isset($after_assoc['line_label'])){
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
         <?php 
         //    if(isset($after_assoc['line_label'])){
-        //     $ghaph_line = $after_assoc['line_label'];
-        //     $counts_label = '';
-        //     $s = '';
-        //     $s = json_decode($ghaph_line);
-        //     echo $counts_label = count($s);
-        //     // echo "<pre>";
-        //     // print_r(json_decode($ghaph_line ));
-        //     // echo "</pre>";
-        //     // echo "ok";
-            
+        //         $ghaph_line = $after_assoc['line_label'];
+        //         $s = '';
+        //         $col_size ='';
+        //         $s = json_decode($ghaph_line);
+        //         foreach($s as $key=>$val){
+        //             if($key == 0){
+        //                 foreach($val as $key=>$kal){
+        //                     if($key == 0){
+        //                         // echo "<pre>";
+        //                         // print_r($kal);
+        //                         // echo "</pre>";
+        //                         $col_size = count($kal);
+        //                     }
+        //                 }
+        //             }
+        //         }
         //     }
+        //     echo $col_size;
         ?>
     <script>
         const labels = <?php if($ghaph_name_type == "line"){echo "''";}else{echo $bar_name;}?>;
@@ -465,13 +527,21 @@ if(isset($after_assoc['line_label'])){
             labels: <?php if($ghaph_name_type == "line"){
                     if(isset($after_assoc['line_label'])){
                         $ghaph_line = $after_assoc['line_label'];
-                        $l = '';
-                        $counts_label = 0;
                         $s = '';
+                        $col_size ='';
                         $s = json_decode($ghaph_line);
-                        $l = count($s);
+                        foreach($s as $key=>$val){
+                            if($key == 0){
+                                foreach($val as $key=>$kal){
+                                    if($key == 0){
+                                        $col_size = count($kal);
+                                    }
+                                }
+                            }
+                        }
+                        $counts_label = 0;
                         echo "[";
-                        for($i=0; $i < $l; $i++){
+                        for($i=0; $i < $col_size; $i++){
                             echo '"'.$counts_label +=10;
                             echo '"';
                             echo ",";
@@ -529,7 +599,7 @@ if(isset($after_assoc['line_label'])){
                 const {ctx, chartArea:{top, bottom, left, right}} = chart;
                 ctx.save();
                 if(logo.complete){
-                    ctx.drawImage(logo, (ctx.canvas.offsetWidth - 100), (ctx.canvas.offsetHeight - 100), 80, 80);
+                    ctx.drawImage(logo, (ctx.canvas.offsetWidth - 100), (ctx.canvas.offsetHeight - 60), 70, 70);
                 }
             }
         }
@@ -538,13 +608,15 @@ if(isset($after_assoc['line_label'])){
             type: '<?php echo $ghaph_name_type;?>',
             data: data,
             options: {
+                maintainAspectRatio :false,
                 animations: {
                     tension: {
-                        duration: 5000,
+                        duration: 1000,
                         easing: 'linear',
-                        // from: 1,
-                        // to: 0,
-                        // loop: true
+                        delay: 1000,
+                        from: 1,
+                        to: 0,
+                        loop: true
                     }
                 }
                 <?php  

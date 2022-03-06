@@ -259,7 +259,9 @@ img{
 .content-md{
     width: 70%;
 }
-
+#myChart{
+    height: 600px !important;
+}
 @media (max-width: 1100px) {
     .content{
         padding: 15px;
@@ -269,6 +271,9 @@ img{
     }
     .form .content{
         width: 100%;
+    }
+    #myChart{
+        height: 600px !important;
     }
 }
 
@@ -330,6 +335,10 @@ img{
     .right-content .content-main{
         padding-top: 30px;
         padding-left : 0px;
+    }
+    #myChart{
+        height: 500px !important;
+        padding-bottom: 15px !important;
     }
 }
 

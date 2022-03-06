@@ -1,5 +1,6 @@
 <?php
 session_start();
+require '../database/db.php';
 
 if(isset($_GET['type'])){
     $_SESSION['bar_type'] = $_GET['type'];
@@ -7,6 +8,10 @@ if(isset($_GET['type'])){
 if(isset($_GET['type_name'])){
     $_SESSION['chart_type'] = $_GET['type_name'];
 }
+
+
+
+
 $get_type_status ='';
 $get_chart_type = '';
 
@@ -78,6 +83,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
         header('location:post_data_piechart.php');
+    }
+}
+
+
+
+if(isset($_GET['u_id'])){
+    $_SESSION['u_id'] = $_GET['u_id'];
+    $sql = "SELECT * FROM chart where user_id = '". $_SESSION['u_id']."' "; 
+    $result = mysqli_query($db_conection, $sql);
+    if($result){
+        $after_assoc = mysqli_fetch_assoc($result);
+        // print_r($after_assoc);
+        if(isset($after_assoc['title'])){
+            $_SESSION['bar_title'] = $after_assoc['title'];
+        }
+        if(isset($after_assoc['sub_title'])){
+           $_SESSION['bar_sub_title'] = $after_assoc['sub_title'];
+        }
+        
     }
 }
 

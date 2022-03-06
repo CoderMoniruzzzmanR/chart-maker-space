@@ -1,9 +1,11 @@
 <?php
 require '../database/db.php';
 $get_id ='';
+
 if(isset($_GET['id'])){
     $get_id = $_GET['id'];
 }
+
 $select_chart_db = " SELECT * FROM chart";
 $result = mysqli_query($db_conection, $select_chart_db);
 $get_user_sesion_id ='';
@@ -102,13 +104,21 @@ if(isset($get_user_id)){
             labels: <?php if($ghaph_name_type == "line"){
                     if(isset($after_assoc['line_label'])){
                         $ghaph_line = $after_assoc['line_label'];
-                        $l = '';
-                        $counts_label = 0;
                         $s = '';
+                        $col_size ='';
                         $s = json_decode($ghaph_line);
-                        $l = count($s);
+                        foreach($s as $key=>$val){
+                            if($key == 0){
+                                foreach($val as $key=>$kal){
+                                    if($key == 0){
+                                        $col_size = count($kal);
+                                    }
+                                }
+                            }
+                        }
+                        $counts_label = 0;
                         echo "[";
-                        for($i=0; $i < $l; $i++){
+                        for($i=0; $i < $col_size; $i++){
                             echo '"'.$counts_label +=10;
                             echo '"';
                             echo ",";
@@ -161,7 +171,7 @@ if(isset($get_user_id)){
                 const {ctx, chartArea:{top, bottom, left, right}} = chart;
                 ctx.save();
                 if(logo.complete){
-                    ctx.drawImage(logo, (ctx.canvas.offsetWidth - 100), (ctx.canvas.offsetHeight - 100), 80, 80);
+                    ctx.drawImage(logo, (ctx.canvas.offsetWidth -100), (ctx.canvas.offsetHeight - 100), 70, 70);
                 }
             }
         }
@@ -169,10 +179,12 @@ if(isset($get_user_id)){
             type: '<?php echo $ghaph_name_type;?>',
             data: data,
             options: {
+                maintainAspectRatio :false,
                 animations: {
                     tension: {
-                        duration: 3000,
-                        easing: 'easeInOutCubic',
+                        duration: 1000,
+                        easing: 'linear',
+                        delay: 1000,
                         from: 1,
                         to: 0,
                         loop: true
@@ -236,6 +248,9 @@ if(isset($get_user_id)){
             config
         );
 
+        window.addEventListener('640', () => {
+            myChart.resize(600, 600);
+        });
     </script>
         
 </body>

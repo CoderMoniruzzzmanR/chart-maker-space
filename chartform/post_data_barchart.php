@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require '../database/db.php';
 $get_type_status ='';
 $get_chart_type = '';
 
@@ -11,6 +11,23 @@ if(isset($_SESSION['bar_type'])){
 if(isset($_SESSION['chart_type'])){
     $get_chart_type = $_SESSION['chart_type'];
 }
+
+if(isset($_SESSION['u_id'])){
+    // echo $_SESSION['u_id'];
+    $sql = "SELECT * FROM chart where user_id = '". $_SESSION['u_id']."' "; 
+    $result = mysqli_query($db_conection, $sql);
+    if($result){
+        $after_assoc = mysqli_fetch_assoc($result);
+       
+        if(isset($after_assoc['bar_value'])){
+            $l = json_decode($after_assoc['bar_value']);
+            $_SESSION['values']=$l;
+        }
+      
+        // print_r($_SESSION['colors']);
+    }
+}
+
 
 if(isset($get_type_status)){
     $chart_id = $get_type_status;
@@ -74,6 +91,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   
 }
 
+// print_r($_SESSION['colors']);
+
+
 
 ?>
 <!DOCTYPE html>
@@ -125,9 +145,24 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     }
                                 }
                             ?>
+                            
                         </div>
 
                         <div class="content-md">
+                            <div style="margin-left: 30px;">
+                                    <?php
+                                        if(isset($bar_er)){
+                                            echo '<span id="errorRe" style="color:red; padding-bottom:10px; display:block;">';
+                                            echo $bar_er;
+                                            echo '</span>';
+                                        }
+                                        if(isset($value_er)){
+                                            echo '<span id="errorRe" style="color:red; padding-bottom:10px;display:block;">';
+                                            echo $value_er;
+                                            echo '</span>';
+                                        }
+                                    ?>
+                            </div>
                             <div class="form-row">
                                 <div class="form-item" style="margin-right: 30px; width: 220px;">
                                     <label>Bar Label
@@ -167,7 +202,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                                     echo '<input type="text" name="bar[]" class="form-control" value="'.$_SESSION['bars'][$x].'"/>';
                                                 echo '</div>';
                                                 echo '<div class="form-item" style="width:230px; margin-right: 30px;">';
-                                                    if(isset($_SESSION['values'])){
+                                                    if(isset($_SESSION['values'][$x])){
                                                         echo '<input type="number" name="value[]" class="form-input-bar number" value="'.$_SESSION['values'][$x].'"/>';
                                                     }
                                                     else{
@@ -190,14 +225,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                                             }
                                                         }
                                                         if($x == 1){
-                                                            if($_SESSION['colors'][$x] == ' '){
+                                                            if($_SESSION['colors'][$x] == ''){
                                                                 echo '<input type="color" name="color[]"  class="form-control color" value="#7cb5ec">';
                                                             }else{
                                                                 echo '<input type="color" name="color[]"  class="form-control color" value="'.$_SESSION['colors'][$x].'">';
                                                             }
                                                         }
                                                         if($x == 2){
-                                                            if($_SESSION['colors'][$x] == ' '){
+                                                            if($_SESSION['colors'][$x] == ''){
                                                                 echo '<input type="color" name="color[]"  class="form-control color" value="#f45b5b">';
                                                             }else{
                                                                 echo '<input type="color" name="color[]"  class="form-control color" value="'.$_SESSION['colors'][$x].'">';
@@ -259,6 +294,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             </div>
                                 <script>
                                     function getInputValue(){
+
                                         var inputVal = document.getElementById("row_number").value;
                                         if(inputVal !== ''){
                                         var html = '';

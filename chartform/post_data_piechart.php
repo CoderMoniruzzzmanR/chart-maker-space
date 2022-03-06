@@ -1,10 +1,31 @@
 <?php
 session_start();
-
+require '../database/db.php';
 $get_type_status ='';
 $get_chart_type = '';
 
 // $_SESSION['colors'] = ' ';
+if(isset($_SESSION['u_id'])){
+    $sql = "SELECT * FROM chart where user_id = '". $_SESSION['u_id']."' "; 
+    $result = mysqli_query($db_conection, $sql);
+    if($result){
+        $after_assoc = mysqli_fetch_assoc($result);
+        $after_assoc['bar_name'];
+        if(isset($after_assoc['bar_name'])){
+            $f = json_decode($after_assoc['bar_name']);
+            $_SESSION['bars']=$f;
+        }
+        if(isset($after_assoc['bar_value'])){
+            $m = json_decode($after_assoc['bar_value']);
+            $_SESSION['values']=$m;
+        }
+        if(isset($after_assoc['bar_color'])){
+            $d = json_decode($after_assoc['bar_color']);
+            $_SESSION['colors'] = $d;
+        }
+    }
+}
+
 
 if(isset($_SESSION['bars'])){
     $couts_y = count($_SESSION['bars']);
@@ -152,6 +173,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             ?>
                         </div>
                         <div class="content-md">
+                            <div style="margin-left: 30px;">
+                                    <?php
+                                        if(isset($bar_er)){
+                                            echo '<span id="errorRe" style="color:red; padding-bottom:10px; display:block;">';
+                                            echo $bar_er;
+                                            echo '</span>';
+                                        }
+                                        if(isset($value_er)){
+                                            echo '<span id="errorRe" style="color:red; padding-bottom:10px;display:block;">';
+                                            echo $value_er;
+                                            echo '</span>';
+                                        }
+                                    ?>
+                            </div>
                             <div class="form-row">
                                 <div class="form-item" style="margin-right: 30px; width: 220px;">
                                     <label>Pie Label

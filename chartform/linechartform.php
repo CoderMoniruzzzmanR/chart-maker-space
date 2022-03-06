@@ -1,11 +1,64 @@
 <?php
 session_start();
+require '../database/db.php';
+
 if(isset($_GET['type'])){
     $_SESSION['bar_type'] = $_GET['type'];
 }
 if(isset($_GET['type_name'])){
     $_SESSION['chart_type'] = $_GET['type_name'];
 }
+
+if(isset($_GET['u_id'])){
+    $_SESSION['u_id'] = $_GET['u_id'];
+    unset($_SESSION['line_value']);
+    unset($_SESSION['line_bars']);
+    unset($_SESSION['line_bg']);
+    $sql = "SELECT * FROM chart where user_id = '". $_SESSION['u_id']."' "; 
+    $result = mysqli_query($db_conection, $sql);
+    if($result){
+        $after_assoc = mysqli_fetch_assoc($result);
+        $new_valm = json_decode($after_assoc['line_label']);
+        $valm_lenth = '';
+        $valm_lenth = count($new_valm);
+        $my_gl = '';
+        if( $_SESSION['u_id']){
+            // session_destroy();
+            for($i =0; $i< $valm_lenth; $i++){
+                
+                echo "<pre>";
+            
+                print_r($_SESSION['line_value'][$i] = $new_valm[$i][0]);
+                echo "</pre>";
+    
+                echo "<pre>";
+                print_r( $_SESSION['line_bars'][$i] = $new_valm[$i][1]);
+                echo "</pre>";
+    
+                echo "<pre>";
+                print_r($_SESSION['line_bg'][$i] = $new_valm[$i][2]);
+                echo "</pre>";
+    
+            }
+        }
+        
+
+        // echo $valm_lenth;
+        echo  $my_gl;
+        // echo "<pre>";
+        // print_r( $new_valm);
+        // echo "</pre>";
+    }
+
+}
+echo "<pre>";
+print_r($_SESSION['line_value']);
+echo "</pre>";
+
+echo "<pre>";
+print_r($_SESSION['line_bg']);
+echo "</pre>";
+
 $get_type_status ='';
 $get_chart_type = '';
 
@@ -33,7 +86,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
     }
-
+  
     if (!empty($_POST["title"])) {
         if(strlen($_POST['title']) > 100){
             $title_err = "Max character 100";
@@ -46,6 +99,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     else{
         $_SESSION['bar_title'] = $_POST['title'];
     }
+     
     if (!empty($_POST["sub_title"])) {
         if(strlen($_POST['sub_title']) > 100){
             $sub_title_err = "Max character 100";
@@ -58,6 +112,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     else{
         $_SESSION['bar_sub_title'] = $_POST['sub_title'];
     }
+
     if (!empty($_POST["vertical_label"])) {
         if(strlen($_POST['vertical_label']) > 100){
             $vertical_label_err = "Max character 100";
@@ -70,6 +125,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     else{
         $_SESSION['bar_vertical_label'] = $_POST['vertical_label'];
     }
+     
     if (!empty($_POST["horizontal_label"])) {
         if(strlen($_POST['horizontal_label']) > 100){
             $horizontal_label_err = "Max character 100";
@@ -82,43 +138,87 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     else{
         $_SESSION['bar_horizontal_label'] = $_POST['horizontal_label'];
     }
-    if($flag) {
-        $lenu= '';
-        $get_previous = '';
-
-        if(isset($_SESSION['line_bars'])){
-            $len_s = count($_SESSION['line_bars']);
-                for($i =0; $i<$len_s; $i++){
-                    // echo "<pre>";
-                    if(!isset($_SESSION['line_bg'][$i])){
-                        $leg = 6;
-                        $randomletter = substr(str_shuffle("123478965abcd123478965ef123478965123478965"), 0, $leg);
-                        $_SESSION['line_bg'][$i]="#".$randomletter;
-                    }
-                    $to='';
-                    if(isset($_SESSION['line_value'][$i])){
-                       $to = count($_SESSION['line_value'][0]);
-                    }
-                    if(empty($_SESSION['line_value'][$i])){
-                        $valy = array();
-                        // echo $to;
-                        for($j=0; $j<$to; $j++){
-                            $valy[] .= 'null';
-                        }
-                       $_SESSION['line_value'][$i] = $valy;
-                    }
-                    else{
-                       
-                    }
-                    $_SESSION['line_ara'][$i] = array($_SESSION['line_value'][$i] ,$_SESSION['line_bars'][$i], $_SESSION['line_bg'][$i]);
-                    // echo "</pre>";
-                    header('location:post_data_linechart.php');
-                  
+    $h = '';
+    if(isset($_SESSION['line_bars'])){
+        $h = count($_SESSION['line_bars']);
+    }
+    if(isset($_SESSION['line_bg'])){
+        for($i =0; $i<$h; $i++){
+            if(!isset($_SESSION['line_bg'][$i])){
+                $leg = 6;
+                $randomletter = substr(str_shuffle("123478965abcd123478965ef123478965123478965"), 0, $leg);
+                $_SESSION['line_bg'][$i] = "#".$randomletter;
+            }   
+        }
+    }
+   
+    if(!empty($_SESSION['line_value'])){
+        // $flag = false;
+        for($i =0; $i< $h; $i++){
+            $to='';
+            if(isset($_SESSION['line_value'][$i])){
+                $to = count($_SESSION['line_value'][0]);
+            }
+            if(empty($_SESSION['line_value'][$i])){
+                $valy = array();
+                for($j=0; $j< $to; $j++){
+                    $valy[] .= ' ';
                 }
+                $_SESSION['line_value'][$i] = $valy;
+                // $flag = false;
             }
         }
+    }
+    
+    if(isset($_SESSION['line_value'])){
+        echo "<pre>";
+        print_r( $_SESSION['line_value']);
+        echo "</pre>";
+    }
+    
+    if($flag) {
+        header('location:post_data_linechart.php');
+    }
+    
+    // if($flag) {
+    //     $lenu= '';
+    //     $get_previous = '';
+
+    //     if(isset($_SESSION['line_bars'])){
+    //         $len_s = count($_SESSION['line_bars']);
+    //             for($i =0; $i<$len_s; $i++){
+    //                 // echo "<pre>";
+    //                 if(!isset($_SESSION['line_bg'][$i])){
+    //                     $leg = 6;
+    //                     $randomletter = substr(str_shuffle("123478965abcd123478965ef123478965123478965"), 0, $leg);
+    //                     $_SESSION['line_bg'][$i]="#".$randomletter;
+    //                 }
+    //                 $to='';
+    //                 if(isset($_SESSION['line_value'][$i])){
+    //                    $to = count($_SESSION['line_value'][0]);
+    //                 }
+    //                 if(empty($_SESSION['line_value'][$i])){
+    //                     $valy = array();
+    //                     // echo $to;
+    //                     for($j=0; $j<$to; $j++){
+    //                         $valy[] .= 'null';
+    //                     }
+    //                    $_SESSION['line_value'][$i] = $valy;
+    //                 }
+    //                 else{
+                       
+    //                 }
+    //                 $_SESSION['line_ara'][$i] = array($_SESSION['line_value'][$i] ,$_SESSION['line_bars'][$i], $_SESSION['line_bg'][$i]);
+    //                 // echo "</pre>";
+    //                 header('location:post_data_linechart.php');
+                  
+    //             }
+    //         }
+    //     }
         
 }
+
+
 
 ?>
 
@@ -151,7 +251,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 </ol>
             </div>
             <!-- //post_data_barchart.php -->
-            <div class="content-wrap">
+            <div class="content-wrap" style="margin-top: 15px;">
                 <form action="<?php echo $_SERVER['PHP_SELF'] ;?>?type=<?php echo $get_type_status;?>&&type_name=<?php echo $get_chart_type;?>" class="form" method="POST">
                     <div class="left-content">
                         <div class="chart-image">
@@ -176,71 +276,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                 }
                             ?>
                         </div>
-                    </div>
-
-                    <div class="right-content">
-                        <div class="content-main">
-                            <div class="form-item">
-                                <label>Title</label>
-                                <input type="text" name="title" class="form-control" value="<?php
-                                if(isset( $_SESSION['bar_title'])){
-                                    print_r($_SESSION['bar_title']);
-                                }?>"/>
-                                <?php
-                                if(isset($title_err)){
-                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
-                                    echo $title_err;
-                                    echo '</span>';
-                                }?>
-                            </div>
-                            <div class="form-item">
-                                <label>Sub Title</label>
-                                <input type="text" name="sub_title" class="form-control"
-                                value="<?php
-                                if(isset( $_SESSION['bar_sub_title'])){
-                                    print_r($_SESSION['bar_sub_title']);
-                                }
-                                ?>"/>
-
-                                <?php
-                                if(isset($sub_title_err)){
-                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
-                                    echo $sub_title_err;
-                                    echo '</span>';
-                                }?>
-                            </div>
-                            <div class="form-item">
-                                <label>Vertical label</label>
-                                <input type="text" name="vertical_label" class="form-control" value="<?php
-                                if(isset( $_SESSION['bar_vertical_label'])){
-                                    print_r($_SESSION['bar_vertical_label']);
-                                }
-                                ?>"/>
-                                <?php
-                                if(isset($vertical_label_err)){
-                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
-                                    echo  $vertical_label_err;
-                                    echo '</span>';
-                                }?>
-                            </div>
-                            <div class="form-item">
-                                <label>Horizontal label</label>
-                                <input type="text" name="horizontal_label" class="form-control" value="<?php
-                                if(isset( $_SESSION['bar_horizontal_label'])){
-                                    print_r($_SESSION['bar_horizontal_label']);
-                                }
-                                ?>"/>
-                                <?php
-                                if(isset($horizontal_label_err)){
-                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
-                                    echo $horizontal_label_err;
-                                    echo '</span>';
-                                }?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content">
+                        <div class="content">
 
                         <div>
                             <label>Label line</label>
@@ -311,6 +347,71 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </div>       
 
                     </div>
+                    </div>
+
+                    <div class="right-content">
+                        <div class="content-main">
+                            <div class="form-item">
+                                <label>Title</label>
+                                <input type="text" name="title" class="form-control" value="<?php
+                                if(isset( $_SESSION['bar_title'])){
+                                    print_r($_SESSION['bar_title']);
+                                }?>"/>
+                                <?php
+                                if(isset($title_err)){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $title_err;
+                                    echo '</span>';
+                                }?>
+                            </div>
+                            <div class="form-item">
+                                <label>Sub Title</label>
+                                <input type="text" name="sub_title" class="form-control"
+                                value="<?php
+                                if(isset( $_SESSION['bar_sub_title'])){
+                                    print_r($_SESSION['bar_sub_title']);
+                                }
+                                ?>"/>
+
+                                <?php
+                                if(isset($sub_title_err)){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $sub_title_err;
+                                    echo '</span>';
+                                }?>
+                            </div>
+                            <div class="form-item">
+                                <label>Vertical label</label>
+                                <input type="text" name="vertical_label" class="form-control" value="<?php
+                                if(isset( $_SESSION['bar_vertical_label'])){
+                                    print_r($_SESSION['bar_vertical_label']);
+                                }
+                                ?>"/>
+                                <?php
+                                if(isset($vertical_label_err)){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo  $vertical_label_err;
+                                    echo '</span>';
+                                }?>
+                            </div>
+                            <div class="form-item">
+                                <label>Horizontal label</label>
+                                <input type="text" name="horizontal_label" class="form-control" value="<?php
+                                if(isset( $_SESSION['bar_horizontal_label'])){
+                                    print_r($_SESSION['bar_horizontal_label']);
+                                }
+                                ?>"/>
+                                <?php
+                                if(isset($horizontal_label_err)){
+                                    echo '<span style="color:red; padding-bottom:10px; display:block;">';
+                                    echo $horizontal_label_err;
+                                    echo '</span>';
+                                }?>
+                            </div>
+                        </div>
+                    </div>
+
+                    
                     <div class="button-group">
                         <?php  
                             $base_url="http://".$_SERVER['SERVER_NAME'];
