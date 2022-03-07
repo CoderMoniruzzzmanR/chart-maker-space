@@ -116,14 +116,14 @@ $line_vali = '';
 $de_lines = "";
 if(isset($_SESSION['line_ara'])){
     $line_vali = $_SESSION['line_ara'];
-    echo "<pre>";
+    //echo "<pre>";
     $de_lines = json_encode($line_vali);
     // print_r($de_lines);
-    echo '</pre>';
+    //echo '</pre>';
 
-    echo "<pre>";
+   // echo "<pre>";
     // print_r($lo = json_decode($de_lines));
-    echo '</pre>';
+    //echo '</pre>';
 }
 
 if(isset($_SESSION['u_id'])){
@@ -143,7 +143,7 @@ if(isset($session_eid)){
         }
     }
 }
-echo "<br>";
+//echo "<br>";
 $session_id = session_id();
 if(isset($target_edvalue)){
     if($session_id !== $target_edvalue){
@@ -351,9 +351,9 @@ if(isset($after_assoc['chart_type'])){
 
 if(isset($after_assoc['line_label'])){
     $ghaph_line = $after_assoc['line_label'];
-    echo "<pre>";
+    //echo "<pre>";
     // print_r(json_decode($ghaph_line ));
-    echo "</pre>";
+    //echo "</pre>";
     // echo "ok";
 }
 

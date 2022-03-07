@@ -25,39 +25,28 @@ if(isset($_GET['u_id'])){
         if( $_SESSION['u_id']){
             // session_destroy();
             for($i =0; $i< $valm_lenth; $i++){
-                
-                echo "<pre>";
-            
-                print_r($_SESSION['line_value'][$i] = $new_valm[$i][0]);
-                echo "</pre>";
-    
-                echo "<pre>";
-                print_r( $_SESSION['line_bars'][$i] = $new_valm[$i][1]);
-                echo "</pre>";
-    
-                echo "<pre>";
-                print_r($_SESSION['line_bg'][$i] = $new_valm[$i][2]);
-                echo "</pre>";
-    
+                $_SESSION['line_value'][$i] = $new_valm[$i][0];
+                $_SESSION['line_bars'][$i] = $new_valm[$i][1];
+                $_SESSION['line_bg'][$i] = $new_valm[$i][2];
             }
         }
         
 
         // echo $valm_lenth;
-        echo  $my_gl;
+        // echo  $my_gl;
         // echo "<pre>";
         // print_r( $new_valm);
         // echo "</pre>";
     }
 
 }
-echo "<pre>";
-print_r($_SESSION['line_value']);
-echo "</pre>";
+// echo "<pre>";
+// print_r($_SESSION['line_value']);
+// echo "</pre>";
 
-echo "<pre>";
-print_r($_SESSION['line_bg']);
-echo "</pre>";
+// echo "<pre>";
+// print_r($_SESSION['line_bg']);
+// echo "</pre>";
 
 $get_type_status ='';
 $get_chart_type = '';
@@ -170,11 +159,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
     }
     
-    if(isset($_SESSION['line_value'])){
-        echo "<pre>";
-        print_r( $_SESSION['line_value']);
-        echo "</pre>";
-    }
+    // if(isset($_SESSION['line_value'])){
+    //     echo "<pre>";
+    //     print_r( $_SESSION['line_value']);
+    //     echo "</pre>";
+    // }
     
     if($flag) {
         header('location:post_data_linechart.php');

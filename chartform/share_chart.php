@@ -71,9 +71,9 @@ if(isset($get_user_id)){
 
     if(isset($after_assoc['line_label'])){
         $ghaph_line = $after_assoc['line_label'];
-        echo "<pre>";
+        //echo "<pre>";
         // print_r(json_decode($ghaph_line ));
-        echo "</pre>";
+        //echo "</pre>";
         // echo "ok";
     }
 }

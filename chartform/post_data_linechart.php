@@ -100,9 +100,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             for($j=0; $j<count($_POST['line_value'.($i+1).'']); $j++){
                 if(!empty($_POST['line_value'.($i+1).''][$j])){
 
-                    echo "<pre>";
-                    print_r($_POST['line_value'.($i+1).''][$j]);
-                    echo "</pre>";
+                    //echo "<pre>";
+                    $_POST['line_value'.($i+1).''][$j];
+                    //echo "</pre>";
                     $flag = true;
                 }
                 else{
@@ -112,7 +112,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
     }
-    echo $et;
+    // echo $et;
     if($flag){
         for($i =0; $i<$lin_counts; $i++){
             $_SESSION['line_ara'][$i] = array($_SESSION['line_value'][$i],$_SESSION['line_bars'][$i],$_SESSION['line_bg'][$i]);
