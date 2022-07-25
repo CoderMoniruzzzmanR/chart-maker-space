@@ -179,6 +179,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../src/css/style.css"></link>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <div class="main">
@@ -234,10 +235,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         $b_text = '';
                                         if($x>0){
                                             $b_id = $x;
-                                            $b_text = 'id="inputFormRow"';
+                                            $b_text = '';
                                         }
-                                        echo '<div class="form-item" '.$b_text.'>';
+                                        echo '<div class="form-item" id="inputFormRow">';
                                         echo'<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name" value="'.$bar.'">';
+                                        if($x == 0){
+                                            echo '<button id="removeRow" class="btn" style="display:none;font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
+                                        }
                                         if($x>0){
                                         echo '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
                                         }
@@ -245,8 +249,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     }
                                 }
                                 else{
-                                    echo ' <div class="form-item">';
+                                    echo ' <div class="form-item" id="inputFormRow">';
                                     echo '<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name"/>';
+                                    echo '<button id="removeRow" class="btn" style="display:none; font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
                                     echo '</div>';
                                 }
                             ?>
@@ -260,16 +265,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                 ?>
                             <div>
                                 <input type="number" name="row_number" id="row_number" class="form-input-bar number"> 
-                                <button id="addRowMore" type="button" class="add-more-btn" onclick="getInputValue();">+ Add Row More</button>
+                                <button id="addRowMores" type="button" class="add-more-btn" onclick="getInputValue();">+ Add Row More</button>
                                 <script>
-                                    function getInputValue(){
+
+
+                                    document.getElementById("addRowMores").addEventListener("click", function(event) {
+                                        event.preventDefault();
                                         var inputVal = document.getElementById("row_number").value;
+
+                                        
+
                                         if(inputVal !== ''){
                                             var html = '';
                                             for (let i = 0; i < inputVal; i++) {
                                                 html += ' <div class="form-item" id="inputFormRow">';
                                                 
-                                                html +='<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name"/>';
+                                                html +='<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name" id="getValueBar"/>';
 
                                                 html += '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
                                                 html += '</div>';
@@ -279,13 +290,44 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                             if($errRe){
                                                 $errRe .remove();
                                             }
-                                        
+                                            // var getValueR = document.getElementById("getValueBar").value;
+
                                             document.getElementById("newRow").innerHTML += html;
+
+                                          
+
+                                            
                                             
                                             document.getElementById("row_number").value = '';
                                         }
-                                    }
 
+                                    });
+
+                                    // });
+
+                                    // function getInputValue(){
+                                    //     var inputVal = document.getElementById("row_number").value;
+                                    //     if(inputVal !== ''){
+                                    //         var html = '';
+                                    //         for (let i = 0; i < inputVal; i++) {
+                                    //             html += ' <div class="form-item" id="inputFormRow">';
+                                                
+                                    //             html +='<input type="text" name="bar[]" class="form-input-bar" placeholder="Enter bar name"/>';
+
+                                    //             html += '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 5px; line-height: 10px;height: 30px;">Remove</button>';
+                                    //             html += '</div>';
+
+                                    //         }
+                                    //         $errRe = document.getElementById("errorRe");
+                                    //         if($errRe){
+                                    //             $errRe .remove();
+                                    //         }
+                                        
+                                    //         document.getElementById("newRow").innerHTML += html;
+                                            
+                                    //         document.getElementById("row_number").value = '';
+                                    //     }
+                                    // }
 
                                 </script>
                             </div>       
@@ -368,7 +410,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         </main>
     </div>
 
-     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   
     <script type="text/javascript">
         
         $(document).on('click', '#removeRow', function () {

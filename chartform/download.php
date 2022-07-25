@@ -2,9 +2,10 @@
 session_start();
 require '../database/db.php';
 
-$res_bar_label = $titles = $res_value = $sub_titles = $horizontal_title = $vertical_titles = $get_type_status = $get_chart_type = Null;
+$res_bar_label = $titles = $res_value = $sub_titles = $horizontal_title = $vertical_titles = $get_type_status = $get_chart_type = $user_frame = $res_value_x = Null;
 
 $res_bar = '';
+$err_img = '';
 
 if(isset($_SESSION['bars'])){
     $values_array = $_SESSION['bars'];
@@ -59,6 +60,11 @@ if(isset($_SESSION['chart_type'])){
     $get_chart_type = $_SESSION['chart_type'];
 }
 
+if(isset($_SESSION['x_value'])){
+     $x_value_array = $_SESSION['x_value'];
+     $res_value_x = json_encode($x_value_array);
+ }
+
 // echo '<br>';
 // echo $get_type_status;
 // echo '<br>';
@@ -75,10 +81,7 @@ if(isset($_SESSION['bg_color'])){
     $res_color_bg = json_encode($bg_color_array);
 }
 
-if(isset($_SESSION['value_one'])){
-    $values_one_array = $_SESSION['value_one'];
-    $res_value_one = json_encode($values_one_array);
-}
+
 
 if(isset($_SESSION['values_two'])){
     $values_two_array = $_SESSION['values_two'];
@@ -128,7 +131,7 @@ if(isset($_SESSION['line_ara'])){
 
 if(isset($_SESSION['u_id'])){
     $session_eid = '';
-    $session_eid =$_SESSION['u_id'];
+    $session_eid = $_SESSION['u_id'];
 }
 
 $select_chart_db = " SELECT * FROM chart";
@@ -143,59 +146,43 @@ if(isset($session_eid)){
         }
     }
 }
-//echo "<br>";
+
 $session_id = session_id();
-if(isset($target_edvalue)){
-    if($session_id !== $target_edvalue){
-        // echo "not match";
-        // echo "<br>";
-        $target_edid;
-        // echo "<br>";
-        $target_edvalue;
+
+// echo $session_id;
+// echo "<br>";
+// echo $target_edvalue;
+// echo "<br>";
+
+// if(isset($target_edvalue)){
+//     if($session_id !== $target_edvalue){
+//         // echo "not match";
+//         // echo "<br>";
+//         $target_edid;
+//         // echo "<br>";
+//         $target_edvalue;
+//     }
+// }line_x_axis
+
+$target_value = '';
+$target_id ='';
+
+$select_chart_db = "SELECT * FROM chart";
+$result = mysqli_query($db_conection, $select_chart_db);
+if(isset($session_id)){
+    foreach ($result as $value) {
+        if($value['user_id'] == $session_id){
+            $target_value = $value['user_id'];
+            $target_id = $value['id'];
+        }
     }
 }
 
-
-$select_chart_db = " SELECT * FROM chart";
-$result = mysqli_query($db_conection, $select_chart_db);
 if(isset($_POST['getcode'])){
-    
-    if(empty($_FILES['water-image']['name'])){
-            
-        if(isset($session_id)){
-            $target_value = '';
-            $target_id ='';
-            foreach ($result as $value) {
-                if($value['user_id'] == $session_id){
-                    $target_value = $value['user_id'];
-                    $target_id = $value['id'];
-                }
-            }
-        }
-
-        if(isset($target_edvalue)){
-            if($session_id !== $target_edvalue){
-                $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$target_edvalue',water_image=NULL,values_two='$d_value_two',values_three='$d_value_three',bg_color='$d_bg_color',value_one='$d_value_one',line_label='$de_lines' WHERE id=$target_edid";
-                $result = mysqli_query($db_conection, $update);
-            }
-        }        
-        // echo $target_value;
-        if($session_id !== $target_value){
-            $u = '';
-            // $u =$get_type_status.$get_chart_type.$session_id;
-            $insert = "INSERT INTO chart (bar, type, chart_type, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id,values_two,values_three,bg_color,value_one,line_label) VALUES ('$res_bar_label','$get_type_status','$get_chart_type','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$d_value','$d_color','$session_id','$d_value_two','$d_value_three','$d_bg_color','$d_value_one','  $de_lines')";
-            $result = mysqli_query($db_conection, $insert);
-            // if($result){
-            //     echo "ok";
-            // }
-            // else{
-            //     echo "no";
-            // }
-
-        }
-        else{
-            if(isset($target_id)){
-                $select_db = "SELECT * FROM chart WHERE id = $target_id";
+    if(!empty($target_edvalue)){
+        if(empty($_FILES['water-image']['name'])){
+            if(isset($target_edid)){
+                $select_db = "SELECT * FROM chart WHERE id ='$target_edid'";
                 $result = mysqli_query($db_conection,  $select_db);
                 if($result){
                     $after_assoc = mysqli_fetch_assoc($result);
@@ -207,65 +194,83 @@ if(isset($_POST['getcode'])){
                     unlink($delete_from_location);
                 }
             }  
-            $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$session_id',water_image=NULL,values_two='$d_value_two',values_three='$d_value_three',bg_color='$d_bg_color',value_one='$d_value_one',line_label='$de_lines' WHERE id=$target_id";
+            $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$target_edvalue',water_image=NULL,line_x_axis='$res_value_x',line_label='$de_lines' WHERE id='$target_edid'";
             $result = mysqli_query($db_conection, $update);
-            //  if($result){
-            //     echo "ok";
-            // }
-            // else{
-            //     echo "no";
-            // }
-        }
-        
-    }
-    else{
-        $uploaded_file = $_FILES['water-image'];
-        $after_explode = explode('.', $uploaded_file['name']);
-        $extention = end($after_explode);
-        $allowed_extention = array('png','svg');
-        if(in_array($extention, $allowed_extention)){
-            if($uploaded_file['size'] <= 100000){
-                $file_name = $session_id.'.'.$extention;
-                $new_location = '../uploads/'.$file_name;
-  		        move_uploaded_file($uploaded_file['tmp_name'], $new_location);
-                $image_name = $_SESSION['file_name'] = $file_name;
-                if(isset($session_id)){
-                    $target_value = '';
-                    $target_id ='';
-                    foreach ($result as $value) {
-                        if($value['user_id'] == $session_id){
-                            $target_value = $value['user_id'];
-                            $target_id = $value['id'];
-                        }
-                    }
-                }
-
-                if(isset($target_edvalue)){
-                    if($session_id !== $target_edvalue){
-                        $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$target_edvalue',water_image='$image_name',values_two='$d_value_two',values_three='$d_value_three',bg_color='$d_bg_color',value_one='$d_value_one',line_label='$de_lines' WHERE id=$target_edid";
-                        $result = mysqli_query($db_conection, $update);
-                    }
-                }  
-
-                if($session_id !== $target_value){
-                    $u = '';
-                    // $u = $get_type_status.$get_chart_type.$session_id;
-                    $insert = "INSERT INTO chart (bar, type, chart_type, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id, water_image, values_two,values_three, bg_color, value_one, line_label) VALUES ('$res_bar_label','$get_type_status','$get_chart_type','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$d_value','$d_color','$session_id','$image_name','$d_value_two','$d_value_three','$d_bg_color','$d_value_one','$de_lines')";
-                    $result = mysqli_query($db_conection, $insert);
+        }else{
+            $uploaded_file = $_FILES['water-image'];
+            $after_explode = explode('.', $uploaded_file['name']);
+            $extention = end($after_explode);
+            $allowed_extention = array('png','svg');
+            if(in_array($extention, $allowed_extention)){
+                if($uploaded_file['size'] <= 100000){
+                    $file_name = $session_id.'.'.$extention;
+                    $new_location = '../uploads/'.$file_name;
+                    move_uploaded_file($uploaded_file['tmp_name'], $new_location);
+                    $image_name = $_SESSION['file_name'] = $file_name;
+                    $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$target_edvalue',water_image='$image_name',line_x_axis='$res_value_x',line_label='$de_lines' WHERE id='$target_edid'";
+                    $result = mysqli_query($db_conection, $update);
                 }
                 else{
-                    // echo $target_id;
-                    $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$session_id',water_image='$image_name',values_two='$d_value_two',values_three='$d_value_three',bg_color='$d_bg_color',value_one='$d_value_one',line_label='$de_lines' WHERE id=$target_id";
-                    $result = mysqli_query($db_conection, $update);
-                    // echo 'ok';
+                    $err_img = "Image Too large";
                 }
             }
             else{
-                header('location:download.php?water_image=File Too large');
+                $err_img= "Invalidate image format(Only support png, svg)";
+            }
+        }
+    }
+    else{
+        if(empty($_FILES['water-image']['name'])){
+            if($session_id !== $target_value){
+                $insert = "INSERT INTO chart (bar, type, chart_type, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id, line_x_axis, line_label) VALUES ('$res_bar_label','$get_type_status','$get_chart_type','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$d_value','$d_color','$session_id','$res_value_x','$de_lines')";
+                $result = mysqli_query($db_conection, $insert);
+            }
+            else{
+                if(isset($target_id)){
+                    $select_db = "SELECT * FROM chart WHERE id ='$target_id'";
+                    $result = mysqli_query($db_conection,  $select_db);
+                    if($result){
+                        $after_assoc = mysqli_fetch_assoc($result);
+                    }
+                }
+                if(isset($after_assoc['water_image'])){
+                    if($after_assoc['water_image'] !== NULL){
+                        $delete_from_location="../uploads/".$after_assoc['water_image'];
+                        unlink($delete_from_location);
+                    }
+                }  
+                $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$session_id',water_image=NULL,line_x_axis='$res_value_x',line_label='$de_lines' WHERE id='$target_id'";
+                $result = mysqli_query($db_conection, $update);
             }
         }
         else{
-            header('location:download.php?water_image=Invalidate file format(Only support png, svg)');
+            $uploaded_file = $_FILES['water-image'];
+            $after_explode = explode('.', $uploaded_file['name']);
+            $extention = end($after_explode);
+            $allowed_extention = array('png','svg');
+            if(in_array($extention, $allowed_extention)){
+                if($uploaded_file['size'] <= 100000){
+                    $file_name = $session_id.'.'.$extention;
+                    $new_location = '../uploads/'.$file_name;
+                    move_uploaded_file($uploaded_file['tmp_name'], $new_location);
+                    $image_name = $_SESSION['file_name'] = $file_name;
+                    if($session_id !== $target_value){
+                        $insert = "INSERT INTO chart (bar, type, chart_type, title, sub_title, horizontal_title, vertical_title, bar_name, bar_value, bar_color, user_id, water_image, line_x_axis, line_label) VALUES ('$res_bar_label','$get_type_status','$get_chart_type','$titles','$sub_titles','$horizontal_title','$vertical_titles','$res_bar','$d_value','$d_color','$session_id','$image_name','$res_value_x','$de_lines')";
+                        $result = mysqli_query($db_conection, $insert);
+                    }
+                    else{
+                        $update = "UPDATE chart SET bar='$res_bar_label',type='$get_type_status',chart_type='$get_chart_type',title='$titles',sub_title='$sub_titles',horizontal_title='$horizontal_title',vertical_title='$vertical_titles',bar_name='$res_bar',bar_value ='$d_value',bar_color='$d_color',user_id='$session_id',water_image='$image_name',line_x_axis='$res_value_x',line_label='$de_lines' WHERE id='$target_id'";
+                        $result = mysqli_query($db_conection, $update);
+                    }
+                }
+                else{
+                    $err_img = "Image Too large";
+                }
+            }
+            else{
+                $err_img= "Invalidate Image format(Only support png, svg)";
+            }
+
         }
     }
 }
@@ -277,15 +282,23 @@ $result = mysqli_query($db_conection, $select_chart_db);
 $get_iframe_id = '';
 $get_iframe_target_id = '';
 foreach ($result as $value) {
-    if($value['user_id'] == $session_id){
-        $get_iframe_id = $value['user_id'];
-        $get_iframe_target_id = $value['id'];
+    if(empty($_SESSION['u_id'])){
+        if($value['user_id'] == $session_id){
+            $get_iframe_id = $value['user_id'];
+            $get_iframe_target_id = $value['id'];
+        }
+    }else{
+        if($value['user_id'] == $_SESSION['u_id']){
+            $get_iframe_id = $value['user_id'];
+            $get_iframe_target_id = $value['id'];
+        }
     }
+    
 }
 
 if(isset($get_iframe_target_id)){
-    $select_db = "SELECT * FROM chart WHERE id = $get_iframe_target_id";
-    $result = mysqli_query($db_conection,  $select_db);
+    $select_db = "SELECT * FROM chart WHERE id = '$get_iframe_target_id'";
+    $result = mysqli_query($db_conection, $select_db);
     if($result){
         $after_assoc = mysqli_fetch_assoc($result);
     }
@@ -340,6 +353,11 @@ if(isset( $after_assoc['bar_color'])){
     $bar_color =  $after_assoc['bar_color'];
 }
 
+$line_x_axis_l = '';
+if(isset( $after_assoc['line_x_axis'])){
+     $line_x_axis_l =  $after_assoc['line_x_axis'];
+}
+ 
 $graph_status = $ghaph_name_type = '';
 if(isset( $after_assoc['type'])){
     $graph_status =  $after_assoc['type'];
@@ -394,9 +412,9 @@ if(isset($after_assoc['line_label'])){
                     <div class="form-item">
                         <input type="file" name="water-image" class="form-control">
                         <?php
-                            if(isset( $_GET['water_image'])){
+                            if(isset($err_img)){
                                 echo '<span style="color:red; padding-bottom:10px; display:block;">';
-                                echo $_GET['water_image'];
+                                echo $err_img;
                                 echo '</span>';
                             }
                         ?>
@@ -525,28 +543,30 @@ if(isset($after_assoc['line_label'])){
         const labels = <?php if($ghaph_name_type == "line"){echo "''";}else{echo $bar_name;}?>;
         const data = {
             labels: <?php if($ghaph_name_type == "line"){
-                    if(isset($after_assoc['line_label'])){
-                        $ghaph_line = $after_assoc['line_label'];
-                        $s = '';
-                        $col_size ='';
-                        $s = json_decode($ghaph_line);
-                        foreach($s as $key=>$val){
-                            if($key == 0){
-                                foreach($val as $key=>$kal){
-                                    if($key == 0){
-                                        $col_size = count($kal);
-                                    }
-                                }
-                            }
-                        }
-                        $counts_label = 0;
-                        echo "[";
-                        for($i=0; $i < $col_size; $i++){
-                            echo '"'.$counts_label +=10;
-                            echo '"';
-                            echo ",";
-                        }
-                        echo "]";
+                    if(isset($after_assoc['line_x_axis'])){
+                         echo $after_assoc['line_x_axis'];
+
+                    //     $ghaph_line = $after_assoc['line_label'];
+                    //     $s = '';
+                    //     $col_size ='';
+                    //     $s = json_decode($ghaph_line);
+                    //     foreach($s as $key=>$val){
+                    //         if($key == 0){
+                    //             foreach($val as $key=>$kal){
+                    //                 if($key == 0){
+                    //                     $col_size = count($kal);
+                    //                 }
+                    //             }
+                    //         }
+                    //     }
+                    //     $counts_label = 0;
+                    //     echo "[";
+                    //     for($i=0; $i < $col_size; $i++){
+                    //         echo '"'.$counts_label +=10;
+                    //         echo '"';
+                    //         echo ",";
+                    //     }
+                    //     echo "]";
                     }
                 }else{echo "labels";}?>
             ,
@@ -599,7 +619,7 @@ if(isset($after_assoc['line_label'])){
                 const {ctx, chartArea:{top, bottom, left, right}} = chart;
                 ctx.save();
                 if(logo.complete){
-                    ctx.drawImage(logo, (ctx.canvas.offsetWidth - 100), (ctx.canvas.offsetHeight - 60), 70, 70);
+                    ctx.drawImage(logo, (ctx.canvas.offsetWidth - 100), (ctx.canvas.offsetHeight - 600), 70, 70);
                 }
             }
         }
@@ -614,9 +634,6 @@ if(isset($after_assoc['line_label'])){
                         duration: 1000,
                         easing: 'linear',
                         delay: 1000,
-                        from: 1,
-                        to: 0,
-                        loop: true
                     }
                 }
                 <?php  
@@ -626,13 +643,13 @@ if(isset($after_assoc['line_label'])){
                         echo " x:{";
                         echo " stacked: true,";
                         echo " title: {";
-                        echo "display: true, text: $horizontal_title, padding: {top: 30}, font: {size: 18},";
+                        echo "display: true, text: $horizontal_title, padding: {top: 30}, font: {size: 15},";
                         echo " },"; 
                         echo "},";
                         echo "y:{";
                         echo " stacked: true,";
                         echo " title: {";
-                        echo "display: true, text: $vertical_title, padding: {right: 45,}, font: {size: 18},";
+                        echo "display: true, text: $vertical_title, padding: {right: 45,}, font: {size: 15},";
                         echo " },";   
                         echo "},";
                         echo " }";
@@ -654,7 +671,8 @@ if(isset($after_assoc['line_label'])){
                         display: true,
                         text: <?php echo $title;?>,
                         padding: {
-                            bottom: 15,
+                            top: 10,
+                            bottom: 10,
                         },
                         font: {
                             size: 18

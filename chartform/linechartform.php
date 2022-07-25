@@ -14,11 +14,13 @@ if(isset($_GET['u_id'])){
     unset($_SESSION['line_value']);
     unset($_SESSION['line_bars']);
     unset($_SESSION['line_bg']);
+    unset($_SESSION['x_value']);
     $sql = "SELECT * FROM chart where user_id = '". $_SESSION['u_id']."' "; 
     $result = mysqli_query($db_conection, $sql);
     if($result){
         $after_assoc = mysqli_fetch_assoc($result);
         $new_valm = json_decode($after_assoc['line_label']);
+        $new_line_x_axis = json_decode($after_assoc['line_x_axis']);
         $valm_lenth = '';
         $valm_lenth = count($new_valm);
         $my_gl = '';
@@ -29,6 +31,12 @@ if(isset($_GET['u_id'])){
                 $_SESSION['line_bars'][$i] = $new_valm[$i][1];
                 $_SESSION['line_bg'][$i] = $new_valm[$i][2];
             }
+            for( $x=0; $x < count($new_line_x_axis); $x++){
+               $_SESSION['x_value'][$x] = $new_line_x_axis[$x];
+            }
+          //   echo "<pre>";
+          //   print_r($_SESSION['x_value']);
+          //   echo "</pre>";
         }
         
 

@@ -24,6 +24,7 @@ if(isset($_SESSION['chart_type'])){
 
 $title_err = $sub_title_err = NULL;
 $flag = true;
+
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     if (!empty($_POST["title"])) {
         if(strlen($_POST['title']) > 100){

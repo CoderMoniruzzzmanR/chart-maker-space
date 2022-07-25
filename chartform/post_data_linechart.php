@@ -90,6 +90,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(isset($_POST['bg_color'])){
         $_SESSION['line_bg'] = $_POST['bg_color'];
     }
+
+     $xet = '';
+     if(empty($_POST['x_value'])){
+          $xet = "please input x-axis value";
+     }
+     else{
+          // echo count($_POST['x_value']);
+          $_SESSION['x_value'] = $_POST['x_value'];
+          for($x=0; $x<count($_POST['x_value']); $x++){
+               if(!empty($_POST['x_value'][$x])){
+                    $flag = true;
+               }
+               else{
+                    $xet = "Please input x-axis value";
+                    $flag = false;
+               }
+          }
+     }
+     
     $et = ''; 
     for($i =0; $i<$lin_counts; $i++){
         if(empty($_POST['line_value'.($i+1).''])){
@@ -112,6 +131,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
     }
+
     // echo $et;
     if($flag){
         for($i =0; $i<$lin_counts; $i++){
@@ -248,20 +268,31 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             <!-- download.php -->
                 <form action="<?php echo $_SERVER['PHP_SELF'] ;?>" class="form" method="POST">
                     <div class="form-wrap w-100" style="max-width:100%;">
-                        <?php
-                            if(isset($et)){
-                                echo '<span id="errorRe" style="color:red; padding-bottom:10px;">';
-                                echo $et;
-                                echo '</span>';
-                            }
-                        ?>
+                         <div class="error-hints" style="padding-bottom:30px;">
+                         <?php
+                              if(isset($et)){
+                                   echo '<span id="errorRe" style="color:red; padding-bottom:10px; display:block;">';
+                                   echo $et;
+                                   echo '</span>';
+                              }
+                              if(isset($xet)){
+                                   echo '<span id="errorRe" style="color:red; padding-bottom:20px;" display:block;>';
+                                   echo $xet;
+                                   echo '</span>';
+                              }
+                         ?>
+                        </div>
                         <div class="form-fields" style="max-width:100%;">
 
                             <div class="form-row row2" style="padding-left: 0px;">
+                                   
+                              <div class="content-main" style="width:140px; margin-right:10px;">
+                                   <label>X-axis</label>
+                              </div>
                                 <?php
                                     for($i=0; $i < $lin_counts; $i++){
                                         echo '<div class="content-main" style="width:85px;">';
-                                        echo "<label>value".($i+1)."</label>";
+                                        echo "<label>".$_SESSION['line_bars'][$i]."</label>";
                                         //start color
                                         echo '<div style="display:flex;">';
                                             if(isset($_SESSION['line_bg'])){
@@ -278,6 +309,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         echo '</div>';
                                     }
                                 ?>
+
                                 <?php 
                                     // echo $lin_counts;
                                
@@ -293,6 +325,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     // echo $wec_c;
                                     for ($row = 0; $row < $wec_r; $row++) {  
                                         echo '<div class="content-main" style="width:100%; display:flex;" id="inputFormRow">';
+                                        
+                                        echo '<div class="form-item" style="width:140px; margin-right:10px;">';
+
+                                        echo'<input type="text" name="x_value[]" class="form-input-bar numbers" style="width: 120px;" value="'.$_SESSION['x_value'][$row].'">';
+
+                                        echo '</div>';
+
                                         for ($col = 0; $col < $wec_c; $col++) {
                                             echo '<div class="form-item" style="width:85px;">';
                                                 echo'<input type="number" name="line_value'.($col+1).'[]" class="form-input-bar numbers" value="'.$_SESSION['line_value'][$col][$row].'">';
@@ -303,12 +342,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                             echo '<button id="removeRow" class="btn" style="font-size:14px;padding:0px 12px; margin: 6px; line-height: 10px;height: 30px;">remove</button>';
                                         }
                                         echo '</div>';
-                                    }
+                                   }
                                 }
                                 else{
-                                    echo '<div class="content-main" style="width:100%; display:flex;">'; 
+                                   echo '<div class="content-main" style="width:100%; display:flex;">'; 
 
-                                    for($i=0; $i < $lin_counts; $i++){
+                                   echo '<div class="form-item" style="width:140px; margin-right:10px;">';
+
+                                   echo'<input type="text" name="x_value[]" class="form-input-bar numbers" style="width: 120px;">';
+
+                                   echo '</div>';
+
+                                   for($i=0; $i < $lin_counts; $i++){
                                         echo '<div class="form-item" style="width:85px;">';
 
                                         echo'<input type="number" name="line_value'.($i+1).'[]" class="form-input-bar numbers">';
@@ -330,6 +375,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                                     <button id="addRowMore" type="button" class="add-more-btn" onclick="getInputValue();">+ Add Row More</button>
                                     <script>
+
+                                   
+
                                         function getInputValue(){
                                             var inputValCol = document.getElementById("col_number").value;
                                             var inputVal = document.getElementById("row_number").value;
@@ -338,6 +386,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                                             for(var j = 0; j < inputVal; j++) {
                                                 html += '<div class="content-main" style="width:100%; display:flex;" id="inputFormRow">';
+
+                                                html += '<div class="form-item" style="width:140px; margin-right:10px;">';
+
+                                                html += '<input type="text" name="x_value[]" class="form-input-bar numbers" style="width: 120px;">';
+
+                                                html += '</div>';
 
                                                 for(var i = 0; i < inputValCol; i++) {
                                                     html += '<div class="form-item" id="inrow'+i+'" style="width:85px;">';

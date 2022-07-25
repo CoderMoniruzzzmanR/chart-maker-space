@@ -171,7 +171,7 @@ if(isset($get_user_id)){
                 const {ctx, chartArea:{top, bottom, left, right}} = chart;
                 ctx.save();
                 if(logo.complete){
-                    ctx.drawImage(logo, (ctx.canvas.offsetWidth -100), (ctx.canvas.offsetHeight - 100), 70, 70);
+                    ctx.drawImage(logo, (ctx.canvas.offsetWidth -100), (ctx.canvas.offsetHeight - 600), 70, 70);
                 }
             }
         }
@@ -185,9 +185,6 @@ if(isset($get_user_id)){
                         duration: 1000,
                         easing: 'linear',
                         delay: 1000,
-                        from: 1,
-                        to: 0,
-                        loop: true
                     }
                 }
                 <?php  
@@ -197,13 +194,13 @@ if(isset($get_user_id)){
                         echo " x:{";
                         echo " stacked: true,";
                         echo " title: {";
-                        echo "display: true, text: $horizontal_title, padding: {top: 30}, font: {size: 18},";
+                        echo "display: true, text: $horizontal_title, padding: {top: 30}, font: {size: 15},";
                         echo " },"; 
                         echo "},";
                         echo "y:{";
                         echo " stacked: true,";
                         echo " title: {";
-                        echo "display: true, text: $vertical_title, padding: {right: 45,}, font: {size: 18},";
+                        echo "display: true, text: $vertical_title, padding: {right: 45,}, font: {size: 15},";
                         echo " },";   
                         echo "},";
                         echo " }";
@@ -225,7 +222,8 @@ if(isset($get_user_id)){
                         display: true,
                         text: <?php echo $title;?>,
                         padding: {
-                            bottom: 15,
+                            top: 10,
+                            bottom: 10,
                         },
                         font: {
                             size: 18
@@ -248,9 +246,9 @@ if(isset($get_user_id)){
             config
         );
 
-        window.addEventListener('640', () => {
-            myChart.resize(600, 600);
-        });
+        // window.addEventListener('640', () => {
+        //     myChart.resize(600, 600);
+        // });
     </script>
         
 </body>

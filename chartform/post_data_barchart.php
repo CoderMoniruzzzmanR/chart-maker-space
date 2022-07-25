@@ -43,6 +43,7 @@ if(isset($get_type_status)){
 }
 $bar_er = $value_er = $color_er= Null;
 $flag = true;
+
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     $bar_status = $value_status = Null;
     if($_POST['bar']){
@@ -289,8 +290,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                             </div>
                             <div class="form-row">
+                                
                                 <input type="number" name="row_number" id="row_number" class="form-input-bar number"> 
                                 <button id="addRowMore" type="button" class="add-more-btn" onclick="getInputValue();">+ Add Row More</button>
+
                             </div>
                                 <script>
                                     function getInputValue(){
